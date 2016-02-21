@@ -1,21 +1,28 @@
 import d from 'debug';
 const debug = d('reducers.socket');
 import _ from 'lodash';
+import merge from 'lodash/merge';
 
 import {
-  ATTACH_SOCKET_IO,
+  SOCKET_INITIALIZED,
   SOCKET_CLIENT_CONNECTED,
   SOCKET_CLIENT_DISCONNECTED,
   SOCKET_SUBSCRIBE_TO_FLIGHTS,
   SOCKET_UNSUBSCRIBE_TO_FLIGHTS
 } from '../actions/socket';
 
-function reducer(state = {socketIo: null, clients: []}, action) {
+
+const defaultState = {
+  initialized: false,
+  clients: []
+};
+
+export default function reducer(state = defaultState, action) {
   switch(action.type) {
-    case ATTACH_SOCKET_IO:
-      return Object.assign({}, state, {socketIo: action.socketIo});
+    case SOCKET_INITIALIZED:
+      return merge({}, state, {initialized: true});
     case SOCKET_CLIENT_CONNECTED:
-      return Object.assign({}, state, {
+      return merge({}, state, {
         clients: [
           {
             id: action.clientId,
@@ -25,7 +32,7 @@ function reducer(state = {socketIo: null, clients: []}, action) {
         ]
       });
     case SOCKET_CLIENT_DISCONNECTED:
-      return Object.assign({}, state, {
+      return merge({}, state, {
         clients: _.filter(state.clients, (c) => c.id !== action.clientId)
       });
     case SOCKET_SUBSCRIBE_TO_FLIGHTS:
@@ -54,8 +61,8 @@ function reduceSubscribtion(state, action) {
     newFlights = _.without(currentFlights, ...action.flightIds);
   }
 
-  let newClient = Object.assign({}, oldClient, {subscribedFlights: newFlights});
-  const newState = Object.assign({}, state, {
+  let newClient = merge({}, oldClient, {subscribedFlights: newFlights});
+  const newState = merge({}, state, {
     clients: [
       newClient,
       ...otherClients
@@ -65,5 +72,3 @@ function reduceSubscribtion(state, action) {
   debug(newState);
   return newState;
 }
-
-export default reducer;

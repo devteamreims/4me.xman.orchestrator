@@ -4,17 +4,29 @@ import _ from 'lodash';
 
 import {clientConnected, clientDisconnected, subscribeToFlights, unsubscribeToFlights} from '../actions/socket';
 
+
+let mySocket;
+
 // Global socketIo object event handler
-export function attachHandlerToSocketIo(dispatch, socketIo) {
+export function setupSocketIo(dispatch, socketIo) {
   debug('Initializing socket.io');
+
+  mySocket = socketIo;
+
   socketIo.on('connect', function(socket) {
     debug('client connected');
     dispatch(clientConnected(socket.id));
     dispatch(subscribeToFlights(socket.id, [12345]));
     attachHandlerToSocket(dispatch, socket);
   });
+
+  return mySocket;
 }
 
+
+export function getSocket() {
+  return mySocket;
+}
 
 // Per client socket event handler
 export function attachHandlerToSocket(dispatch, socket) {

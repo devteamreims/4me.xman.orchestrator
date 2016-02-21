@@ -6,9 +6,9 @@ const sectors = [{
       max: 345
     },
     geographical: [
-      {lat: 43, long: 41},
-      {lat: 43, long: 41},
-      {lat: 43, long: 41}
+      {lat: 43, long: 4},
+      {lat: 43, long: 5},
+      {lat: 42, long: 4.5}
     ]
   }
 }];

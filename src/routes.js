@@ -1,8 +1,12 @@
 import express from 'express';
 
-let routes = function() {
+import {getXmanRouter} from './controller';
+
+const routes = function(store) {
 
   let router = express.Router();
+
+  router.use('/xman', getXmanRouter(store));
 
   return router;
 };
