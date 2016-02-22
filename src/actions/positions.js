@@ -3,8 +3,6 @@ const debug = d('4me.positions.actions');
 import _ from 'lodash';
 import merge from 'lodash/merge';
 
-import {ASSOCIATE_FLIGHTS_WITH_POSITIONS} from './flight-list';
-
 import {stubPositionData} from '../stubData';
 
 
@@ -29,7 +27,6 @@ export function fetchPositions() {
     // Format our data
     .then(formatPositionData)
     .then((data) => {
-      // First one will populate positions subtree :
       dispatch(updatePositionsAction(data));
     });
   }

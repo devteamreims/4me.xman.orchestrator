@@ -4,9 +4,9 @@ import _ from 'lodash';
 import merge from 'lodash/merge';
 
 import {
-  SET_FLIGHT_LIST
+  SET_FLIGHT_LIST,
+  ASSOCIATE_FLIGHTS_WITH_POSITIONS
 } from '../actions/flight-list';
-
 
 export default function reducer(state, action) {
   if(state === undefined) {
