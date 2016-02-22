@@ -6,12 +6,24 @@ import _ from 'lodash';
 let store;
 
 function getFlights(req, res, next) {
+  const defaultPosition = {
+    when: Date.now(),
+    vertical: {
+      plannedFlightLevel: 0,
+      currentFlightLevel: 0
+    },
+    horizontal: {
+      lat: 0,
+      long: 0
+    }
+  };
+  
   const formattedResults = _.map(store.getState().flightList.flights,
     f => {
       return Object.assign({}, f, {
         advisory: store.getState().advisories[f.advisory] || {},
-        //currentStatus: store.getState().currentStatuses[f.currentStatus] || {},
-        position: store.getState().positions.positions[f.flightId] || {}
+        currentStatus: store.getState().currentStatuses[f.flightId] || {},
+        position: store.getState().positions.positions[f.flightId] || defaultPosition
       });
     }
   );

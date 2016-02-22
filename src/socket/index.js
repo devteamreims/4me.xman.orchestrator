@@ -2,7 +2,7 @@ import d from 'debug';
 const debug = d('4me.socket');
 import _ from 'lodash';
 
-import {clientConnected, clientDisconnected, subscribeToFlights, unsubscribeToFlights} from '../actions/socket';
+import {clientConnected, clientDisconnected} from '../actions/socket';
 
 
 let mySocket;
@@ -16,7 +16,6 @@ export function setupSocketIo(dispatch, socketIo) {
   socketIo.on('connect', function(socket) {
     debug('client connected');
     dispatch(clientConnected(socket.id));
-    dispatch(subscribeToFlights(socket.id, [12345]));
     attachHandlerToSocket(dispatch, socket);
   });
 
@@ -32,11 +31,4 @@ export function getSocket() {
 export function attachHandlerToSocket(dispatch, socket) {
   debug('Attaching socket handlers to client with id : %s', socket.id);
   socket.on('disconnect', () => dispatch(clientDisconnected(socket.id)));
-  socket.on('subscribeToFlights', (flights) => {
-    dispatch(subscribeToFlights(socket.id, flights));
-  });
-
-  socket.on('unsubscribeToFlights', (flights) => {
-    dispatch(unsubscribeToFlights(socket.id, flights));
-  });
 }

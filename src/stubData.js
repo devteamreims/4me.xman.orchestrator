@@ -99,3 +99,14 @@ export const stubPositionData = [
     }
 ];
 
+export const stubCurrentStatus = {
+  when: Date.now(),
+  who: {
+    cwpId: 23,
+    sectors: ['UF', 'KF'],
+  },
+  machReduction: 1,
+  speed: null,
+  minimumCleanSpeed: true
+};
+

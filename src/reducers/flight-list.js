@@ -4,19 +4,16 @@ import _ from 'lodash';
 import merge from 'lodash/merge';
 
 import {
-  SET_FLIGHT_LIST,
-  ASSOCIATE_FLIGHTS_WITH_POSITIONS
+  SET_FLIGHT_LIST
 } from '../actions/flight-list';
 
-export default function reducer(state, action) {
-  if(state === undefined) {
-    return {
-      lastFetched: null,
-      lastUpdated: null,
-      flights: {}
-    };
-  }
+const defaultState = {
+  lastFetched: null,
+  lastUpdated: null,
+  flights: {}
+};
 
+export default function reducer(state = defaultState, action) {
   switch(action.type) {
     case SET_FLIGHT_LIST:
       return merge({}, state, {
