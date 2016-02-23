@@ -1,6 +1,21 @@
 export const stubXmanData = {
   lastUpdated: Date.now() - 1000*8, // Last update from XMAN Aggregator
-  flights: [{
+  flights: [
+  {
+    flightId: 12344,
+    arcid: 'BAW82',
+    destination: 'EGLL',
+    cop: 'ABNUR',
+    lastUpdated: Date.now() - 10*1000,
+    estimatedTimeOverCop: Date.now() + 1000*60*15,
+    delay: 21,
+    advisory: {
+      machReduction: 4,
+      speed: null,
+      when: Date.now() - 1000*60*4,
+      targetTimeOverCop: Date.now() + 1000*60*15
+    }
+  }, {
     flightId: 12345,
     arcid: 'BAW164',
     destination: 'LSZH',
@@ -60,6 +75,19 @@ export const stubXmanData = {
 };
 
 export const stubPositionData = [
+    {
+      flightId: 12344,
+      vertical: {
+        currentFlightLevel: 360,
+        plannedFlightLevel: 360
+      },
+      horizontal: {
+        // Overhead RLP
+        lat: 47.956465,
+        long: 5.294205
+      },
+      when: Date.now() - 10*1000
+    },
     {
       flightId: 12345,
       vertical: {
