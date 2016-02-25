@@ -34,11 +34,21 @@ export default function makeStore(socketIo) {
   store.dispatch(firstStep());
   store.dispatch(fetchPositions());
 
+
+  const randomSectors = () => {
+    const s = [
+      ['UF', 'KF'],
+      ['UR', 'XR', 'KR'],
+      ['YR', 'HR']
+    ];
+
+    return s[Math.floor(Math.random() * s.length)];
+  }
   const stubCurrentStatus = () => ({
-    when: Date.now() - 1000*Math.floor(Math.random() * 15*60),
+    when: Date.now() - 1000*Math.floor(Math.random() * 25*60),
     who: {
       cwpId: 23,
-      sectors: ['UF', 'KF'],
+      sectors: randomSectors(),
     },
     machReduction: Math.floor(Math.random() * 4),
     speed: null,
@@ -50,7 +60,13 @@ export default function makeStore(socketIo) {
     demoChanges();
   }, 15000);
 
+  const demoChanges2 = () => setTimeout(() => {
+    store.dispatch(commitCurrentStatus(12344, stubCurrentStatus()));
+    demoChanges2();
+  }, 6000);
+
   demoChanges();
+  demoChanges2();
 
 
   return store;

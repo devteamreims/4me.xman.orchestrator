@@ -17,6 +17,13 @@ function getFlights(req, res, next) {
       long: 0
     }
   };
+
+  let destFilter = [];
+  if(req.query.destinations !== undefined) {
+    destFilter = req.query.destinations;
+  }
+
+  const filterByDest = f => _.isEmpty(destFilter) || _.includes(destFilter, f.destination);
   
   const formattedResults = _.map(store.getState().flightList.flights,
     f => {
@@ -28,7 +35,7 @@ function getFlights(req, res, next) {
     }
   );
 
-  res.send(formattedResults);
+  res.send(_.filter(formattedResults, filterByDest));
 }
 
 
