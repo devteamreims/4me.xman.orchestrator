@@ -6,6 +6,7 @@ import advisoryReducer from './advisories';
 import positionsReducer from './positions';
 import currentStatusesReducer from './current-statuses';
 
+
 export default combineReducers({
   socket: socketReducer,
   flightList: flightListReducer,

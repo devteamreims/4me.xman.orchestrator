@@ -11,7 +11,7 @@ import {initializeSocket} from './actions/socket';
 import reducers from './reducers';
 import {fetchPositions} from './actions/positions';
 
-import {firstStep} from './actions/flight-list';
+import {firstStep, secondStep, thirdStep} from './actions/flight-list';
 import {commitCurrentStatus} from './actions/current-statuses';
 
 export default function makeStore(socketIo) {
@@ -34,6 +34,11 @@ export default function makeStore(socketIo) {
   store.dispatch(firstStep());
   store.dispatch(fetchPositions());
 
+  // X seconds later, dispatch secondStep
+  setTimeout(() => store.dispatch(secondStep()), 5000);
+  setTimeout(() => store.dispatch(thirdStep()), 10000);
+  setTimeout(() => store.dispatch(fetchPositions()), 20000);
+
 
   const randomSectors = () => {
     const s = [
@@ -44,6 +49,7 @@ export default function makeStore(socketIo) {
 
     return s[Math.floor(Math.random() * s.length)];
   }
+
   const stubCurrentStatus = () => ({
     when: Date.now() - 1000*Math.floor(Math.random() * 25*60),
     who: {

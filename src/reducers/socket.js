@@ -1,5 +1,5 @@
 import d from 'debug';
-const debug = d('reducers.socket');
+const debug = d('4me.socket.reducers');
 import _ from 'lodash';
 import merge from 'lodash/merge';
 
@@ -7,8 +7,7 @@ import {
   SOCKET_INITIALIZED,
   SOCKET_CLIENT_CONNECTED,
   SOCKET_CLIENT_DISCONNECTED,
-  SOCKET_SUBSCRIBE_TO_FLIGHTS,
-  SOCKET_UNSUBSCRIBE_TO_FLIGHTS
+  SOCKET_SET_SUBSCRIPTION_FILTER,
 } from '../actions/socket';
 
 
@@ -26,7 +25,8 @@ export default function reducer(state = defaultState, action) {
         clients: [
           {
             id: action.clientId,
-            subscribedFlights: []
+            sectors: [],
+            verticalFilter: false
           },
           ...state.clients
         ]
@@ -35,33 +35,30 @@ export default function reducer(state = defaultState, action) {
       return merge({}, state, {
         clients: _.filter(state.clients, (c) => c.id !== action.clientId)
       });
-    case SOCKET_SUBSCRIBE_TO_FLIGHTS:
-    case SOCKET_UNSUBSCRIBE_TO_FLIGHTS:
-      debug('POUET ?');
-      return reduceSubscribtion(state, action);
+    case SOCKET_SET_SUBSCRIPTION_FILTER:
+      return reduceSubscriptionFilter(state, action);
   }
   return state;
 }
 
-function reduceSubscribtion(state, action) {
-  debug('nested reducer called !');
-  let oldClient = _.find(state.clients, (c) => c.id === action.clientId);
+function reduceSubscriptionFilter(state, action) {
+  const clientFilter = (c) => c.id === action.clientId;
+
+  const oldClient = _.find(state.clients, clientFilter);
+
   if(_.isEmpty(oldClient)) {
     return state;
   }
-  let currentFlights = oldClient.subscribedFlights;
-  let newFlights = [];
 
-  let otherClients = _.without(state.clients, oldClient);
-  if(action.type === SOCKET_SUBSCRIBE_TO_FLIGHTS) {
-    newFlights = _.uniq([
-      ...action.flightIds,
-      ...currentFlights]);
-  } else if(action.type === SOCKET_UNSUBSCRIBE_TO_FLIGHTS) {
-    newFlights = _.without(currentFlights, ...action.flightIds);
-  }
+  const otherClients = _.reject(state.clients, clientFilter);
 
-  let newClient = merge({}, oldClient, {subscribedFlights: newFlights});
+  const {sectors, verticalFilter} = action;
+
+  let newClient = merge({}, oldClient, {
+    sectors,
+    verticalFilter
+  });
+
   const newState = merge({}, state, {
     clients: [
       newClient,
@@ -70,5 +67,6 @@ function reduceSubscribtion(state, action) {
   });
 
   debug(newState);
+
   return newState;
 }

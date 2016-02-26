@@ -1,8 +1,12 @@
+import _ from 'lodash';
+import d from 'debug';
+const debug = d('4me.STUBDATA');
+
 export const stubXmanData = {
-  lastUpdated: Date.now() - 1000*8, // Last update from XMAN Aggregator
+  lastFetched: Date.now() - 1000*8, // Last update from XMAN Aggregator
   flights: [
   {
-    flightId: 12344,
+    flightId: 'a12344',
     arcid: 'BAW82',
     destination: 'EGLL',
     cop: 'ABNUR',
@@ -16,15 +20,9 @@ export const stubXmanData = {
       targetTimeOverCop: Date.now() + 1000*60*15
     }
   }, {
-    flightId: 12345,
+    flightId: 'a12345',
     arcid: 'BAW164',
-    destination: 'LSZH',
-    position: {
-      currentFlightLevel: 283,
-      plannedFlightLevel: 360,
-      rangeToCop: 153,
-      when: Date.now() - 10*1000
-    },
+    destination: 'EGLL',
     cop: 'ABNUR',
     lastUpdated: Date.now() - 10*1000,
     estimatedTimeOverCop: Date.now() + 1000*60*12,
@@ -36,47 +34,82 @@ export const stubXmanData = {
       targetTimeOverCop: Date.now() + 1000*60*15
     }
   },{
-    flightId: 12346,
+    flightId: 'a12346',
     arcid: 'AFR1015',
     destination: 'LSZH',
-    cop: 'ABNUR',
+    cop: 'BLM',
+    lastUpdated: Date.now() - 10*1000,
     estimatedTimeOverCop: Date.now() + 1000*60*12,
     delay: 12,
-    position: {
-      currentFlightLevel: 380,
-      plannedFlightLevel: 380,
-      rangeToCop: 160,
-      when: Date.now() - 9*1000
-    },
     advisory: {
       machReduction: 0,
       speed: null,
-      when: Date.now() - 1000*60*4
+      when: Date.now() - 1000*60*4,
+      targetTimeOverCop: Date.now() + 1000*60*15
     }
   },{
-    flightId: 12347,
+    flightId: 'a12347',
     arcid: 'MSR777',
     destination: 'EGLL',
     cop: 'ABNUR',
+    lastUpdated: Date.now() - 10*1000,
     estimatedTimeOverCop: Date.now() + 1000*60*12,
     delay: 48,
-    position: {
-      currentFlightLevel: 380,
-      plannedFlightLevel: 380,
-      rangeToCop: 160,
-      when: Date.now() - 9*1000
-    },
     advisory: {
       machReduction: 4,
       speed: null,
-      when: Date.now() - 1000*60*4
+      when: Date.now() - 1000*60*4,
+      targetTimeOverCop: Date.now() + 1000*60*15
     }
   }]
 };
 
+const otherXmanFlight = {
+  flightId: 'a12348',
+  arcid: 'EZY1002',
+  destination: 'EGLL',
+  cop: 'ABNUR',
+  lastUpdated: Date.now() - 10*1000,
+  estimatedTimeOverCop: Date.now() + 1000*60*12,
+  delay: 12,
+  advisory: {
+    machReduction: 3,
+    speed: null,
+    when: Date.now() - 1000*60*4,
+    targetTimeOverCop: Date.now() + 1000*60*15
+  }
+};
+
+export function stubXmanDataMinusOne(data = stubXmanData) {
+  const byArcid = (arcid) => (f) => f.arcid === arcid;
+  const updateLastUpdated = (f) => _.merge({}, f, {lastUpdated: Date.now()});
+
+  const flights = [
+    ..._.chain( data.flights )
+      .reject(byArcid('MSR777'))
+      .reject(byArcid('AFR1015'))
+      .map(updateLastUpdated)
+      .value(),
+    ..._.chain(data.flights)
+      .filter(byArcid('AFR1015'))
+  ];
+
+  return _.merge({}, _.omit(data, 'flights'), {flights});
+}
+
+export function stubXmanDataPlusOne(data = stubXmanData) {
+
+  const flights = [
+    ...data.flights,
+    otherXmanFlight
+  ];
+
+  return _.merge({}, _.omit(data, 'flights'), {flights});
+}
+
 export const stubPositionData = [
     {
-      flightId: 12344,
+      flightId: 'a12344',
       vertical: {
         currentFlightLevel: 360,
         plannedFlightLevel: 360
@@ -89,7 +122,7 @@ export const stubPositionData = [
       when: Date.now() - 10*1000
     },
     {
-      flightId: 12345,
+      flightId: 'a12345',
       vertical: {
         currentFlightLevel: 283,
         plannedFlightLevel: 360
@@ -101,7 +134,7 @@ export const stubPositionData = [
       },
       when: Date.now() - 10*1000
     },{
-      flightId: 12346,
+      flightId: 'a12346',
       vertical: {
         currentFlightLevel: 310,
         plannedFlightLevel: 330
@@ -113,7 +146,7 @@ export const stubPositionData = [
       },
       when: Date.now() - 10*1000
     },{
-      flightId: 12347,
+      flightId: 'a12347',
       vertical: {
         currentFlightLevel: 380,
         plannedFlightLevel: 380

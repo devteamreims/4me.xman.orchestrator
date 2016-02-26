@@ -24,18 +24,19 @@ function getFlights(req, res, next) {
   }
 
   const filterByDest = f => _.isEmpty(destFilter) || _.includes(destFilter, f.destination);
-  
-  const formattedResults = _.map(store.getState().flightList.flights,
-    f => {
-      return Object.assign({}, f, {
-        advisory: store.getState().advisories[f.advisory] || {},
-        currentStatus: store.getState().currentStatuses[f.flightId] || {},
-        position: store.getState().positions.positions[f.flightId] || defaultPosition
-      });
-    }
-  );
 
-  res.send(_.filter(formattedResults, filterByDest));
+  const combineFlightData = (flight, flightId) => Object.assign({}, flight, {
+    advisory: store.getState().advisories[flightId] || {},
+    currentStatus: store.getState().currentStatuses[flightId] || {},
+    position: store.getState().positions.positions[flightId] || defaultPosition
+  });
+
+  const formattedResults = _(store.getState().flightList.flights)
+    .map(combineFlightData)
+    .filter(filterByDest)
+    .value();
+
+  res.send(formattedResults);
 }
 
 

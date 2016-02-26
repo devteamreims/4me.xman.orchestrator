@@ -21,7 +21,7 @@ export function fetchPositions() {
     const flightIds = _.keys(getState().flightList.flights);
     debug('Fetching positions for flights with IDs : [%s]', flightIds.join(','));
     
-    const fetchPromise = new Promise((fulfill) => setTimeout(() => fulfill(stubPositionData), 3000));
+    const fetchPromise = new Promise((fulfill) => setTimeout(() => fulfill(stubPositionData), 5000));
 
     fetchPromise
     // Format our data
@@ -39,7 +39,7 @@ function formatPositionData(rawData) {
    */
 
   let ret = {};
-  _.each(rawData, p => {
+  _.each(_.cloneDeep(rawData), p => {
     ret[p.flightId] = p;
     delete ret[p.flightId].flightId;
   });

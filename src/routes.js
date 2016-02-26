@@ -8,7 +8,15 @@ const routes = function(store) {
 
   router.use('/xman', getXmanRouter(store));
 
+  router.get('/getState', getStateController(store));
+
   return router;
 };
+
+function getStateController(store) {
+  return (req, res, next) => {
+    res.send(store.getState());
+  };
+}
 
 export default routes;
