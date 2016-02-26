@@ -54,7 +54,7 @@ export default function makeStore(socketIo) {
     speed: null,
     minimumCleanSpeed: !!Math.round(Math.random())
   });
-
+/*
   const demoChanges = () => setTimeout(() => {
     store.dispatch(commitCurrentStatus(12345, stubCurrentStatus()));
     demoChanges();
@@ -67,7 +67,7 @@ export default function makeStore(socketIo) {
 
   demoChanges();
   demoChanges2();
-
+*/
 
   return store;
 }
