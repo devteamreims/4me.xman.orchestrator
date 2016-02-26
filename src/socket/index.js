@@ -42,3 +42,24 @@ export function attachHandlerToSocket(dispatch, socket) {
 
   socket.on('disconnect', () => dispatch(clientDisconnected(socket.id)));
 }
+
+export function sendAddFlightsSignal(state, socket, flightIds) {
+  debug('Emitting add_flights');
+  debug(flightIds);
+
+  socket.emit('add_flights', flightIds);
+}
+
+export function sendUpdateFlightsSignal(state, socket, flightIds) {
+  debug('Emitting update_flights');
+  debug(flightIds);
+
+  socket.emit('update_flights', flightIds);
+}
+
+export function sendRemoveFlightsSignal(state, socket, flightIds) {
+  debug('Emitting remove_flights');
+  debug(flightIds);
+
+  socket.emit('remove_flights', flightIds);
+}

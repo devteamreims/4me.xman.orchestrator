@@ -9,7 +9,14 @@ import {
   stubXmanDataMinusOne
 } from '../stubData';
 
-import {getSocket} from '../socket';
+import {
+  getSocket,
+  sendRemoveFlightsSignal,
+  sendUpdateFlightsSignal,
+  sendAddFlightsSignal
+} from '../socket';
+
+import {combineAllFlightData} from '../utils/flight';
 
 export const SET_INITIAL_FLIGHT_LIST = 'SET_INITIAL_FLIGHT_LIST';
 export const ADD_FLIGHTS = 'ADD_FLIGHTS';
@@ -173,15 +180,19 @@ export function updateFlightList(data) {
     const flightsAreUpdated = !_.isEmpty(updatedFlightIds);
     const flightsAreRemoved = !_.isEmpty(removedFlightIds);
 
+    const socket = getSocket();
+
     if(flightsAreAdded) {
       // Send update to socket
-      debug(normalizedAddedFlights);
       dispatch(addFlightsAction(normalizedAddedFlights));
+
+      sendAddFlightsSignal(getState(), socket, addedFlightIds);
     }
 
     if(flightsAreUpdated) {
       // Send update to socket
-      dispatch(updateFlightsAction(normalizedUpdatedFlights))
+      dispatch(updateFlightsAction(normalizedUpdatedFlights));
+      sendUpdateFlightsSignal(getState(), socket, updatedFlightIds);
     }
 
     if(flightsAreRemoved) {
@@ -190,6 +201,9 @@ export function updateFlightList(data) {
         lastFetched: data.lastFetched,
         flightIds: removedFlightIds
       }));
+
+      sendRemoveFlightsSignal(getState(), socket, removedFlightIds);
+
     }
 
 
