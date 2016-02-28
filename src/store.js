@@ -60,14 +60,17 @@ export default function makeStore(socketIo) {
     speed: null,
     minimumCleanSpeed: !!Math.round(Math.random())
   });
+
+  store.dispatch(commitCurrentStatus('a12345', stubCurrentStatus()));
+
 /*
   const demoChanges = () => setTimeout(() => {
-    store.dispatch(commitCurrentStatus(12345, stubCurrentStatus()));
+    store.dispatch(commitCurrentStatus('a12345', stubCurrentStatus()));
     demoChanges();
   }, 15000);
 
   const demoChanges2 = () => setTimeout(() => {
-    store.dispatch(commitCurrentStatus(12344, stubCurrentStatus()));
+    store.dispatch(commitCurrentStatus('a12344', stubCurrentStatus()));
     demoChanges2();
   }, 6000);
 

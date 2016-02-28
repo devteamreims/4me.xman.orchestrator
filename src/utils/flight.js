@@ -18,6 +18,7 @@ export function combineAllFlightData(state) {
 
 function combineSingleFlight(state) {
   return (flight, flightId) => Object.assign({}, flight, {
+    flightId,
     advisory: state.advisories[flightId] || {},
     currentStatus: state.currentStatuses[flightId] || {},
     position: state.positions.positions[flightId] || defaultPosition
@@ -32,6 +33,7 @@ export function combineFlightData(state, flightId) {
   }
 
   return Object.assign({}, flight, {
+    flightId,
     advisory: state.advisories[flightId] || {},
     currentStatus: state.currentStatuses[flightId] || {},
     position: state.positions.positions[flightId] || defaultPosition

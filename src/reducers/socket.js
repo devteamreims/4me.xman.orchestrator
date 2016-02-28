@@ -32,7 +32,7 @@ export default function reducer(state = defaultState, action) {
         ]
       });
     case SOCKET_CLIENT_DISCONNECTED:
-      return merge({}, state, {
+      return Object.assign({}, state, {
         clients: _.filter(state.clients, (c) => c.id !== action.clientId)
       });
     case SOCKET_SET_SUBSCRIPTION_FILTER:

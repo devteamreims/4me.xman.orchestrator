@@ -46,15 +46,18 @@ export function commitCurrentStatus(flightId, status) {
     
     // Send to socket
     const socket = getSocket();
-    const emitToSocket = () => {
+    const emitToSocket = (data) => {
       debugEmit(socket)('update_status', merge({}, {flightId: flightId}, status));
       return data;
     };
 
     // Dispatch action
     const dispatchAction = () => dispatch(setCurrentStatusAction(flightId, status));
-
-    return dbSave().then(emitToSocket).then(dispatchAction);
+    
+    return dbSave()
+      .then(emitToSocket)
+      .then(dispatchAction)
+      .catch((err) => debug(err));
   }
 }
 

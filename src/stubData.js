@@ -18,7 +18,8 @@ export const stubXmanData = {
       speed: null,
       when: Date.now() - 1000*60*4,
       targetTimeOverCop: Date.now() + 1000*60*15
-    }
+    },
+    captureTime: Date.now() - 1000*60*10
   }, {
     flightId: 'a12345',
     arcid: 'BAW164',
@@ -32,7 +33,8 @@ export const stubXmanData = {
       speed: null,
       when: Date.now() - 1000*60*4,
       targetTimeOverCop: Date.now() + 1000*60*15
-    }
+    },
+    captureTime: Date.now() - 1000*60*8
   },{
     flightId: 'a12346',
     arcid: 'AFR1015',
@@ -42,11 +44,12 @@ export const stubXmanData = {
     estimatedTimeOverCop: Date.now() + 1000*60*12,
     delay: 12,
     advisory: {
-      machReduction: 0,
-      speed: null,
+      machReduction: null,
+      speed: 260,
       when: Date.now() - 1000*60*4,
       targetTimeOverCop: Date.now() + 1000*60*15
-    }
+    },
+    captureTime: Date.now() - 1000*60*6
   },{
     flightId: 'a12347',
     arcid: 'MSR777',
@@ -60,7 +63,8 @@ export const stubXmanData = {
       speed: null,
       when: Date.now() - 1000*60*4,
       targetTimeOverCop: Date.now() + 1000*60*15
-    }
+    },
+    captureTime: Date.now() - 1000*60*4
   }]
 };
 
