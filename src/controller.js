@@ -3,7 +3,10 @@ const debug = d('4me.xman.controller');
 import express from 'express';
 import _ from 'lodash';
 
-import {combineFlightData} from './utils/flight';
+import {
+  getFlightsWithData,
+  getFlightsInFilterWithData
+} from './selectors/flight';
 
 let store;
 
@@ -39,8 +42,6 @@ function getFlights(req, res, next) {
 
   const filterByDest = f => _.isEmpty(destFilter) || _.includes(destFilter, f.destination);
 
-  const combineData = (flight, flightId) => combineFlightData(store.getState(), flightId);
-
   const inSectors = (sectors) => {
     debug('Creating sector filter for sectors :');
     debug(sectors);
@@ -64,10 +65,8 @@ function getFlights(req, res, next) {
     };
   };
 
-  const formattedResults = _(store.getState().flightList.flights)
-    .map(combineData)
+  const formattedResults = _(getFlightsInFilterWithData(store.getState(), {sectors, verticalFilter}))
     .filter(filterByDest)
-    .filter(inSectors(sectors))
     .sortBy(f => -f.captureTime)
     .value();
 

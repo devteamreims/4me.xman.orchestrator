@@ -167,7 +167,10 @@ export const stubPositionData = [
 export const stubCurrentStatus = {
   when: Date.now(),
   who: {
-    cwpId: 23,
+    cwp: {
+      id: 23,
+      name: 'P23'
+    },
     sectors: ['UF', 'KF'],
   },
   machReduction: 1,

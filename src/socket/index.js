@@ -5,8 +5,13 @@ import _ from 'lodash';
 import {
   clientConnected,
   clientDisconnected,
-  setSubscriptionFilter
+  setSubscriptionFilter,
+  setXmanAction
 } from '../actions/socket';
+
+import {
+  getFlightsWithData
+} from '../selectors/flight';
 
 
 let mySocket;
@@ -40,26 +45,80 @@ export function attachHandlerToSocket(dispatch, socket) {
     dispatch(setSubscriptionFilter(socket.id, data));
   });
 
+  socket.on('set_action', (data) => {
+    debug('socket: set_action');
+    debug(data);
+
+    dispatch(setXmanAction(data));
+  });
+
   socket.on('disconnect', () => dispatch(clientDisconnected(socket.id)));
 }
 
-export function sendAddFlightsSignal(state, socket, flightIds) {
+import {
+  getClients
+} from '../selectors/socket-clients';
+
+import {
+  getFlightByFlightIdWithData,
+  isFlightInFilter
+} from '../selectors/flight';
+
+const socketsToNotify = (state, flightId) => {
+  const clients = getClients(state);
+  const clientToFilter = (client) => ({sectors: client.sectors, verticalFilter: client.verticalFilter});
+
+  const flight = getFlightByFlightIdWithData(state, flightId);
+
+  const shouldNotify = (client) => isFlightInFilter(clientToFilter(client))(flight);
+
+  return _(clients)
+    .filter(shouldNotify)
+    .map(c => c.id)
+    .value();
+}
+
+export function sendAddFlightsSignal(state, mainSocket, flightIds) {
   debug('Emitting add_flights');
-  debug(flightIds);
+  const clients = getClients(state);
 
-  socket.emit('add_flights', flightIds);
+  _.each(flightIds, (flightId) => {
+    const flight = getFlightByFlightIdWithData(state, flightId);
+    const socketIds = socketsToNotify(state, flightId);
+
+    debug(`Flight with id ${flightId}, notifying clientIds :`);
+    debug(socketIds);
+    
+    _.each(socketIds, (clientId) => mainSocket.to(clientId).emit('add_flights', [flight]));
+  });
+
 }
 
-export function sendUpdateFlightsSignal(state, socket, flightIds) {
+export function sendUpdateFlightsSignal(state, mainSocket, flightIds) {
   debug('Emitting update_flights');
-  debug(flightIds);
+  const clients = getClients(state);
 
-  socket.emit('update_flights', flightIds);
+  _.each(flightIds, (flightId) => {
+    const flight = getFlightByFlightIdWithData(state, flightId);
+    const socketIds = socketsToNotify(state, flightId);
+
+    debug(`Flight with id ${flightId}, notifying sockets :`);
+    debug(socketIds);
+
+    _.each(socketIds, (clientId) => mainSocket.to(clientId).emit('update_flights', [flight]));
+  });
 }
 
-export function sendRemoveFlightsSignal(state, socket, flightIds) {
+export function sendRemoveFlightsSignal(state, mainSocket, flightIds) {
   debug('Emitting remove_flights');
-  debug(flightIds);
+  const clients = getClients(state);
 
-  socket.emit('remove_flights', flightIds);
+  _.each(flightIds, (flightId) => {
+    const socketIds = socketsToNotify(state, flightId);
+
+    debug(`Flight with id ${flightId}, notifying sockets :`);
+    debug(socketIds);
+
+    _.each(socketIds, (clientId) => mainSocket.to(clientId).emit('remove_flights', [flightId]));
+  });
 }

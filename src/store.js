@@ -14,6 +14,8 @@ import {fetchPositions} from './actions/positions';
 import {firstStep, secondStep, thirdStep} from './actions/flight-list';
 import {commitCurrentStatus} from './actions/current-statuses';
 
+import {getSocket} from './socket';
+
 export default function makeStore(socketIo) {
   debug('Creating store');
   
@@ -39,6 +41,17 @@ export default function makeStore(socketIo) {
   setTimeout(() => store.dispatch(thirdStep()), 10000);
   setTimeout(() => store.dispatch(fetchPositions()), 20000);
 
+  const periodicRemove = () => setTimeout(() => {
+    const socket = getSocket();
+    const flightsToRemove = ['a12346', 'BLABLA'];
+
+    debug('Periodic removal of flights : ' + flightsToRemove.join(','));
+    socketIo.emit('remove_flights', flightsToRemove);
+    periodicRemove();
+  }, 5000);
+
+  //periodicRemove();
+
 
   const randomSectors = () => {
     const s = [
@@ -61,9 +74,9 @@ export default function makeStore(socketIo) {
     minimumCleanSpeed: !!Math.round(Math.random())
   });
 
-  store.dispatch(commitCurrentStatus('a12345', stubCurrentStatus()));
+  //store.dispatch(commitCurrentStatus('a12345', stubCurrentStatus()));
 
-/*
+
   const demoChanges = () => setTimeout(() => {
     store.dispatch(commitCurrentStatus('a12345', stubCurrentStatus()));
     demoChanges();
@@ -74,9 +87,9 @@ export default function makeStore(socketIo) {
     demoChanges2();
   }, 6000);
 
-  demoChanges();
-  demoChanges2();
-*/
+  //demoChanges();
+  //demoChanges2();
+
 
   return store;
 }

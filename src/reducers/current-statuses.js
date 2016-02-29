@@ -16,9 +16,9 @@ export default function reducer(state = defaultState, action) {
     case SET_CURRENT_STATUS:
       let obj = {};
       obj[action.flightId] = action.status;
-      return merge({}, state, obj);
+      return Object.assign({}, state, obj);
     case SET_CURRENT_STATUSES:
-      return merge({}, action.data);
+      return Object.assign({}, action.data);
   }
 
   return state;

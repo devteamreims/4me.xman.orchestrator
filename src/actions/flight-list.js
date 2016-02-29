@@ -183,27 +183,33 @@ export function updateFlightList(data) {
     const socket = getSocket();
 
     if(flightsAreAdded) {
-      // Send update to socket
+      // Update our internal tree
       dispatch(addFlightsAction(normalizedAddedFlights));
 
+      // Notify socket clients
       sendAddFlightsSignal(getState(), socket, addedFlightIds);
     }
 
     if(flightsAreUpdated) {
-      // Send update to socket
+      // Update our internal tree
       dispatch(updateFlightsAction(normalizedUpdatedFlights));
+
+      // Notify socket clients
       sendUpdateFlightsSignal(getState(), socket, updatedFlightIds);
     }
 
     if(flightsAreRemoved) {
-      // Send update to socket
+      // Reverse order here
+      // We need state data to notify the right clients
+
+      // Notify socket clients
+      sendRemoveFlightsSignal(getState(), socket, removedFlightIds);
+
+      // Update internal tree
       dispatch(removeFlightsAction({
         lastFetched: data.lastFetched,
         flightIds: removedFlightIds
       }));
-
-      sendRemoveFlightsSignal(getState(), socket, removedFlightIds);
-
     }
 
 

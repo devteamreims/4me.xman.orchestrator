@@ -11,6 +11,15 @@ export const SOCKET_CLIENT_DISCONNECTED = 'SOCKET_CLIENT_DISCONNECTED';
 
 import {setupSocketIo} from '../socket';
 
+import {
+  getFlightByFlightId,
+  getFlightByFlightIdWithData
+} from '../selectors/flight';
+
+import {
+  commitCurrentStatus
+} from './current-statuses';
+
 export function initializeSocket(socketIo) {
   return (dispatch, getState) => {
     setupSocketIo(dispatch, socketIo);
@@ -55,6 +64,80 @@ function setSubscriptionFilterAction(clientId, filter) {
     clientId,
     sectors,
     verticalFilter
+  };
+}
+
+export function setXmanAction(data) {
+  // Expect data to be like this :
+  /*
+  {
+    flightId: XXX,
+    xmanAction: {
+      speed: XXX,
+      machReduction: XXX,
+      minimumCleanSpeed: true/false
+    },
+    who: {
+      sectors: [],
+      cwp: {
+        id: 123,
+        name: 'P123'
+      }
+    }
+  }
+  */
+  return (dispatch, getState) => {
+
+    const flightId = _.get(data, 'flightId', -1);
+    const flight = getFlightByFlightId(getState(), flightId);
+
+    if(_.isEmpty(flight)) {
+      debug(`Got an xman action for an untracked flight ! ${data.flightId}`);
+      return Promise.reject();
+    }
+
+    // Build our currentStatus object
+    const when = Date.now();
+    const who = {
+      sectors: _.get(data, 'who.sectors', []),
+      cwp: {
+        id: _.get(data, 'who.cwp.id', -1),
+        name: _.get(data, 'who.cwp.name', 'Unknown')
+      }
+    };
+
+    const xmanAction = _.get(data, 'xmanAction', {});
+
+
+    const {currentStatus} = getFlightByFlightIdWithData(getState(), flightId);
+    const currentMachReduction = _.get(currentStatus, 'machReduction', null);
+    const currentSpeed = _.get(currentStatus, 'speed', null);
+    const currentMcs = _.get(currentStatus, 'minimumCleanSpeed', null);
+
+    let {machReduction, speed, minimumCleanSpeed} = xmanAction;
+
+    if(minimumCleanSpeed === undefined) {
+      minimumCleanSpeed = currentMcs;
+    }
+
+    if(machReduction === undefined) {
+      machReduction = currentMachReduction;
+    }
+
+    if(speed === undefined) {
+      speed = currentSpeed;
+    }
+
+
+    const status = {
+      when,
+      who,
+      machReduction,
+      speed,
+      minimumCleanSpeed
+    };
+
+    return dispatch(commitCurrentStatus(flightId, status));
   };
 }
 

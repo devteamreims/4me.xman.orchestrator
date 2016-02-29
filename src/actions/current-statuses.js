@@ -4,7 +4,14 @@ const debug = d('4me.actions.currentStatuses');
 import _ from 'lodash';
 import merge from 'lodash/merge';
 
-import {getSocket} from '../socket';
+import {
+  getSocket,
+  sendUpdateFlightsSignal
+} from '../socket';
+
+import {
+  getFlightByFlightIdWithData
+} from '../selectors/flight';
 
 export const SET_CURRENT_STATUS = 'SET_CURRENT_STATUS';
 export const SET_CURRENT_STATUSES = 'SET_CURRENT_STATUSES';
@@ -46,28 +53,16 @@ export function commitCurrentStatus(flightId, status) {
     
     // Send to socket
     const socket = getSocket();
-    const emitToSocket = (data) => {
-      debugEmit(socket)('update_status', merge({}, {flightId: flightId}, status));
-      return data;
-    };
+    const emitToSocket = () => sendUpdateFlightsSignal(getState(), socket, [flightId]);
 
     // Dispatch action
     const dispatchAction = () => dispatch(setCurrentStatusAction(flightId, status));
     
     return dbSave()
-      .then(emitToSocket)
       .then(dispatchAction)
+      .then(emitToSocket)
       .catch((err) => debug(err));
   }
-}
-
-function debugEmit(socket) {
-  return function() {
-    let args = _.clone(_.values(arguments));
-    debug('Emitting to socket : %s with data :', args.shift());
-    debug(args);
-    socket.emit(...arguments);
-  };
 }
 
 function saveToDb(stuffToSave) {
