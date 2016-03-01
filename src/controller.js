@@ -5,7 +5,8 @@ import _ from 'lodash';
 
 import {
   getFlightsWithData,
-  getFlightsInFilterWithData
+  getFlightsInFilterWithData,
+  getSortedFlightsInFilterWithData
 } from './selectors/flight';
 
 let store;
@@ -65,9 +66,8 @@ function getFlights(req, res, next) {
     };
   };
 
-  const formattedResults = _(getFlightsInFilterWithData(store.getState(), {sectors, verticalFilter}))
+  const formattedResults = _(getSortedFlightsInFilterWithData(store.getState(), {sectors, verticalFilter}))
     .filter(filterByDest)
-    .sortBy(f => -f.captureTime)
     .value();
 
   res.send(formattedResults);

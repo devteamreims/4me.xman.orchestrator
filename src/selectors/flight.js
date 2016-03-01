@@ -58,6 +58,8 @@ export function isFlightInFilter(filter) {
 
 export const getFlightsInFilterWithData = (state, filter) => _.filter(getFlightsWithData(state), isFlightInFilter(filter));
 
+export const getSortedFlightsInFilterWithData = (state, filter) => _.sortBy(getFlightsInFilterWithData(state, filter), f => -f.captureTime);
+
 function isInSectorArea(sector, flight) {
   const flights = ['BAW82', 'MSR777', 'AFR1015', 'EZY1002'];
 

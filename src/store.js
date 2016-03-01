@@ -9,7 +9,7 @@ const debug = d('4me.redux');
 
 import {initializeSocket} from './actions/socket';
 import reducers from './reducers';
-import {fetchPositions} from './actions/positions';
+import {updatePositions} from './actions/positions';
 
 import {firstStep, secondStep, thirdStep} from './actions/flight-list';
 import {commitCurrentStatus} from './actions/current-statuses';
@@ -34,12 +34,19 @@ export default function makeStore(socketIo) {
 
   // Example step
   store.dispatch(firstStep());
-  store.dispatch(fetchPositions());
+  store.dispatch(updatePositions());
 
   // X seconds later, dispatch secondStep
   setTimeout(() => store.dispatch(secondStep()), 5000);
   setTimeout(() => store.dispatch(thirdStep()), 10000);
-  setTimeout(() => store.dispatch(fetchPositions()), 20000);
+  
+
+  const periodicPositionUpdate = () => setTimeout(() => {
+    store.dispatch(updatePositions())
+    periodicPositionUpdate();
+  }, 10000);
+
+  periodicPositionUpdate();
 
   const periodicRemove = () => setTimeout(() => {
     const socket = getSocket();

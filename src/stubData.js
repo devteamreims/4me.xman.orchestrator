@@ -111,7 +111,7 @@ export function stubXmanDataPlusOne(data = stubXmanData) {
   return _.merge({}, _.omit(data, 'flights'), {flights});
 }
 
-export const stubPositionData = [
+export const stubPositionData = () => [
     {
       flightId: 'a12344',
       vertical: {

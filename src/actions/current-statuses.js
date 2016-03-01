@@ -6,7 +6,7 @@ import merge from 'lodash/merge';
 
 import {
   getSocket,
-  sendUpdateFlightsSignal
+  broadcastFlightUpdate
 } from '../socket';
 
 import {
@@ -51,15 +51,17 @@ export function commitCurrentStatus(flightId, status) {
     // Save to db
     const dbSave = () => saveToDb(getState().currentStatuses);
     
-    // Send to socket
-    const socket = getSocket();
-    const emitToSocket = () => sendUpdateFlightsSignal(getState(), socket, [flightId]);
+
 
     // Dispatch action
-    const dispatchAction = () => dispatch(setCurrentStatusAction(flightId, status));
-    
-    return dbSave()
-      .then(dispatchAction)
+    const dispatchAction = () => Promise.resolve(dispatch(setCurrentStatusAction(flightId, status)));
+
+    // Send to socket
+    const socket = getSocket();
+    const emitToSocket = () => broadcastFlightUpdate(socket, getFlightByFlightIdWithData(getState(), flightId));
+
+    return dispatchAction()
+      .then(dbSave)
       .then(emitToSocket)
       .catch((err) => debug(err));
   }

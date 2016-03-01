@@ -9,13 +9,6 @@ import {
   stubXmanDataMinusOne
 } from '../stubData';
 
-import {
-  getSocket,
-  sendRemoveFlightsSignal,
-  sendUpdateFlightsSignal,
-  sendAddFlightsSignal
-} from '../socket';
-
 import {combineAllFlightData} from '../utils/flight';
 
 export const SET_INITIAL_FLIGHT_LIST = 'SET_INITIAL_FLIGHT_LIST';
@@ -180,31 +173,18 @@ export function updateFlightList(data) {
     const flightsAreUpdated = !_.isEmpty(updatedFlightIds);
     const flightsAreRemoved = !_.isEmpty(removedFlightIds);
 
-    const socket = getSocket();
 
     if(flightsAreAdded) {
       // Update our internal tree
       dispatch(addFlightsAction(normalizedAddedFlights));
-
-      // Notify socket clients
-      sendAddFlightsSignal(getState(), socket, addedFlightIds);
     }
 
     if(flightsAreUpdated) {
       // Update our internal tree
       dispatch(updateFlightsAction(normalizedUpdatedFlights));
-
-      // Notify socket clients
-      sendUpdateFlightsSignal(getState(), socket, updatedFlightIds);
     }
 
     if(flightsAreRemoved) {
-      // Reverse order here
-      // We need state data to notify the right clients
-
-      // Notify socket clients
-      sendRemoveFlightsSignal(getState(), socket, removedFlightIds);
-
       // Update internal tree
       dispatch(removeFlightsAction({
         lastFetched: data.lastFetched,

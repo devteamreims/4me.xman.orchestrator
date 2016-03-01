@@ -55,70 +55,11 @@ export function attachHandlerToSocket(dispatch, socket) {
   socket.on('disconnect', () => dispatch(clientDisconnected(socket.id)));
 }
 
-import {
-  getClients
-} from '../selectors/socket-clients';
-
-import {
-  getFlightByFlightIdWithData,
-  isFlightInFilter
-} from '../selectors/flight';
-
-const socketsToNotify = (state, flightId) => {
-  const clients = getClients(state);
-  const clientToFilter = (client) => ({sectors: client.sectors, verticalFilter: client.verticalFilter});
-
-  const flight = getFlightByFlightIdWithData(state, flightId);
-
-  const shouldNotify = (client) => isFlightInFilter(clientToFilter(client))(flight);
-
-  return _(clients)
-    .filter(shouldNotify)
-    .map(c => c.id)
-    .value();
+export function sendFlightListUpdate(mainSocket, clientId, flights) {
+  mainSocket.to(clientId).emit('update_flights', flights);
 }
 
-export function sendAddFlightsSignal(state, mainSocket, flightIds) {
-  debug('Emitting add_flights');
-  const clients = getClients(state);
-
-  _.each(flightIds, (flightId) => {
-    const flight = getFlightByFlightIdWithData(state, flightId);
-    const socketIds = socketsToNotify(state, flightId);
-
-    debug(`Flight with id ${flightId}, notifying clientIds :`);
-    debug(socketIds);
-    
-    _.each(socketIds, (clientId) => mainSocket.to(clientId).emit('add_flights', [flight]));
-  });
-
-}
-
-export function sendUpdateFlightsSignal(state, mainSocket, flightIds) {
-  debug('Emitting update_flights');
-  const clients = getClients(state);
-
-  _.each(flightIds, (flightId) => {
-    const flight = getFlightByFlightIdWithData(state, flightId);
-    const socketIds = socketsToNotify(state, flightId);
-
-    debug(`Flight with id ${flightId}, notifying sockets :`);
-    debug(socketIds);
-
-    _.each(socketIds, (clientId) => mainSocket.to(clientId).emit('update_flights', [flight]));
-  });
-}
-
-export function sendRemoveFlightsSignal(state, mainSocket, flightIds) {
-  debug('Emitting remove_flights');
-  const clients = getClients(state);
-
-  _.each(flightIds, (flightId) => {
-    const socketIds = socketsToNotify(state, flightId);
-
-    debug(`Flight with id ${flightId}, notifying sockets :`);
-    debug(socketIds);
-
-    _.each(socketIds, (clientId) => mainSocket.to(clientId).emit('remove_flights', [flightId]));
-  });
+export function broadcastFlightUpdate(mainSocket, flight) {
+  debug(flight);
+  mainSocket.emit('update_flight', flight);
 }

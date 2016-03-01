@@ -21,7 +21,7 @@ export default function reducer(state = defaultState, action) {
     case SOCKET_INITIALIZED:
       return merge({}, state, {initialized: true});
     case SOCKET_CLIENT_CONNECTED:
-      return merge({}, state, {
+      return Object.assign({}, state, {
         clients: [
           {
             id: action.clientId,
@@ -54,12 +54,12 @@ function reduceSubscriptionFilter(state, action) {
 
   const {sectors, verticalFilter} = action;
 
-  let newClient = merge({}, oldClient, {
+  let newClient = Object.assign({}, oldClient, {
     sectors,
     verticalFilter
   });
 
-  const newState = merge({}, state, {
+  const newState = Object.assign({}, state, {
     clients: [
       newClient,
       ...otherClients
