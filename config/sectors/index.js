@@ -1,16 +1,10 @@
-const sectors = [{
-  name: 'UF',
-  'egll': {
-    vertical: {
-      min: 195,
-      max: 345
-    },
-    geographical: [
-      {lat: 43, long: 4},
-      {lat: 43, long: 5},
-      {lat: 42, long: 4.5}
-    ]
-  }
-}];
+import R from './5R';
+import N from './4N';
+import E from './4E';
+import H from './4H';
+import DF from './KD2F';
+import FIR from './FIR';
 
-export default sectors;
+import merge from 'lodash/merge';
+
+export default merge(R, N, E, H, DF, FIR);

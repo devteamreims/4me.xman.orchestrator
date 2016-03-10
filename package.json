@@ -6,6 +6,7 @@
   "scripts": {
     "babel-node": "babel-node server.js",
     "dev": "DEBUG=4me.* npm run start",
+    "coords": "babel-node coords.js",
     "start": "nodemon --exec npm run babel-node",
     "test": "NODE_ENV=test mocha --compilers js:babel-register --recursive"
   },
@@ -30,8 +31,10 @@
     "redux-freeze": "^0.1.2",
     "redux-logger": "^2.5.2",
     "redux-thunk": "^1.0.3",
+    "sexagesimal": "^0.5.0",
     "socket.io": "^1.4.4",
-    "socket.io-cookie-parser": "^1.0.0"
+    "socket.io-cookie-parser": "^1.0.0",
+    "turf": "^2.0.2"
   },
   "devDependencies": {
     "chai": "^3.4.1",
