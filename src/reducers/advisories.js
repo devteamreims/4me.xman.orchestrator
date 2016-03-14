@@ -20,10 +20,10 @@ export default function(state = defaultState, action) {
     case SET_INITIAL_FLIGHT_LIST:
       return merge({}, action.entities.advisories);
     case REMOVE_FLIGHTS:
-      return _.omit(state, action.flightIds);
+      return _.omit(state, action.ifplIds);
     case ADD_FLIGHTS:
     case UPDATE_FLIGHTS:
-      return merge(state, action.entities.advisories);
+      return merge({}, state, action.entities.advisories);
   }
   return state;
 }

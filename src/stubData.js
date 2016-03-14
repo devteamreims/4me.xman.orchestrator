@@ -6,7 +6,7 @@ export const stubXmanData = {
   lastFetched: Date.now() - 1000*8, // Last update from XMAN Aggregator
   flights: [
   {
-    flightId: 'a12344',
+    ifplId: 'a12344',
     arcid: 'BAW82',
     destination: 'EGLL',
     cop: 'ABNUR',
@@ -21,7 +21,7 @@ export const stubXmanData = {
     },
     captureTime: Date.now() - 1000*60*10
   }, {
-    flightId: 'a12345',
+    ifplId: 'a12345',
     arcid: 'BAW164',
     destination: 'EGLL',
     cop: 'ABNUR',
@@ -36,7 +36,7 @@ export const stubXmanData = {
     },
     captureTime: Date.now() - 1000*60*8
   },{
-    flightId: 'a12346',
+    ifplId: 'a12346',
     arcid: 'AFR1015',
     destination: 'LSZH',
     cop: 'BLM',
@@ -51,7 +51,7 @@ export const stubXmanData = {
     },
     captureTime: Date.now() - 1000*60*6
   },{
-    flightId: 'a12347',
+    ifplId: 'a12347',
     arcid: 'MSR777',
     destination: 'EGLL',
     cop: 'ABNUR',
@@ -69,7 +69,7 @@ export const stubXmanData = {
 };
 
 const otherXmanFlight = {
-  flightId: 'a12348',
+  ifplId: 'a12348',
   arcid: 'EZY1002',
   destination: 'EGLL',
   cop: 'ABNUR',
@@ -113,7 +113,7 @@ export function stubXmanDataPlusOne(data = stubXmanData) {
 
 export const stubPositionData = () => [
     {
-      flightId: 'a12344',
+      ifplId: 'a12344',
       vertical: {
         currentFlightLevel: 360,
         plannedFlightLevel: 360
@@ -126,7 +126,7 @@ export const stubPositionData = () => [
       when: Date.now() - 10*1000
     },
     {
-      flightId: 'a12345',
+      ifplId: 'a12345',
       vertical: {
         currentFlightLevel: 283,
         plannedFlightLevel: 360
@@ -138,7 +138,7 @@ export const stubPositionData = () => [
       },
       when: Date.now() - 10*1000
     },{
-      flightId: 'a12346',
+      ifplId: 'a12346',
       vertical: {
         currentFlightLevel: 310,
         plannedFlightLevel: 330
@@ -150,7 +150,7 @@ export const stubPositionData = () => [
       },
       when: Date.now() - 10*1000
     },{
-      flightId: 'a12347',
+      ifplId: 'a12347',
       vertical: {
         currentFlightLevel: 380,
         plannedFlightLevel: 380

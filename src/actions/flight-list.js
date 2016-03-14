@@ -3,6 +3,10 @@ const debug = d('4me.flightList.actions');
 import _ from 'lodash';
 import moment from 'moment';
 
+import rp from 'request-promise';
+
+const request = rp;
+
 import {
   stubXmanData,
   stubXmanDataPlusOne,
@@ -16,6 +20,25 @@ export const ADD_FLIGHTS = 'ADD_FLIGHTS';
 export const REMOVE_FLIGHTS = 'REMOVE_FLIGHTS';
 export const UPDATE_FLIGHTS = 'UPDATE_FLIGHTS';
 
+
+import {
+  isFirstRun,
+  getFlights,
+} from '../selectors/flight-list';
+
+export function updateFlights() {
+  return (dispatch, getState) => {
+    const url = process.env.EGLL_PARSER_URL;
+
+    return request(url)
+      .then(rawData => JSON.parse(rawData))
+      .then(rawData => {
+        debug('Got data from backend');
+        return dispatch(updateFlightList(rawData));
+      });
+  };
+}
+
 export function getInitialFlightList(data) {
   return (dispatch, getState) => {
 
@@ -26,7 +49,7 @@ export function getInitialFlightList(data) {
     const normalizedData = normalizeXmanData(data);
 
     debug(normalizedData);
-  
+
     debug('Fetching initial xman data');
     debug('Got %d flights from backend', _.size(normalizedData.entities.flights));
 
@@ -40,7 +63,7 @@ function normalizeXmanData(data) {
     ...
     flights: [
       {
-        flightId: XXX,
+        ifplId: XXX,
         ...,
         advisory: {...}
       },
@@ -67,10 +90,10 @@ function normalizeXmanData(data) {
     // Deal with flights
     const flight = _.clone(f);
     const advisory = _.clone(f.advisory);
-    const flightId = '' + flight.flightId;
+    const ifplId = flight.ifplId;
 
-    toMerge.flights[flightId] = _.omit(flight, ['advisory', 'flightId']);
-    toMerge.advisories[flightId] = advisory;
+    toMerge.flights[ifplId] = _.omit(flight, ['advisory']);
+    toMerge.advisories[ifplId] = advisory;
 
     return {
       flights: _.merge({}, prev.flights, toMerge.flights),
@@ -85,19 +108,17 @@ function normalizeXmanData(data) {
 
 export function updateFlightList(data) {
   return (dispatch, getState) => {
-
-    // Check wether this is a first update or not
-    const firstRun = getState().flightList.lastFetched === null;
-  
-    if(firstRun) {
+    /*
+    if(isFirstRun(getState())) {
       return setFlightListAction(data);
     }
+    */
 
     // Process data for updating, this is our main refresh point
     // We diff the existing flightList with the provided flightList
     // Unknown flights are added, removed flights are trashed, other flights are updated
 
-    const trackedFlightCount = _.size(getState().flightList.flights);
+    const trackedFlightCount = _.size(getFlights(getState()));
     const updatedFlightCount = _.size(data.flights);
 
     debug('Backend was updated %s', moment(data.lastFetched).fromNow());
@@ -107,71 +128,71 @@ export function updateFlightList(data) {
       updatedFlightCount
     );
 
-    const oldFlights = getState().flightList.flights;
+    const oldFlights = getFlights(getState());
     const newFlights = data.flights;
 
     // Slightly different syntax here, since we have a different data format
     // newFlights hasn't been normalized yet
-    const toFlightIds = f => f.flightId;
-    const newFlightIds = _.map(newFlights, toFlightIds);
-    const oldFlightIds = _.keys(oldFlights);
+    const toIfplId = f => f.ifplId;
+    const newIfplIds = _.map(newFlights, toIfplId);
+    const oldIfplIds = _.keys(oldFlights);
 
 
 
-    const addedFlightIds = _(newFlights)
-      .map(toFlightIds)
-      .without(...oldFlightIds)
+    const addedIfplIds = _(newFlights)
+      .map(toIfplId)
+      .without(...oldIfplIds)
       .value();
 
-    const removedFlightIds = _(oldFlights)
+    const removedIfplIds = _(oldFlights)
       .keys()
-      .without(...newFlightIds)
+      .without(...newIfplIds)
       .value();
 
-    const commonFlightIds = _.intersection(oldFlightIds, newFlightIds);
-    
+    const commonIfplIds = _.intersection(newIfplIds, oldIfplIds);
+
     // Helper function to find oldFlight by id
-    const oldFlightById = (flightId) => _.find(oldFlights, (f, key) => key === flightId);
+    const oldFlightById = (ifplId) => _.find(oldFlights, (f, key) => key === ifplId);
 
-    const isOldFlight = (f) => _.includes(oldFlightIds, f.flightId);
+    const isOldFlight = (f) => _.includes(oldIfplIds, toIfplId(f));
 
-    const updatedFlightIds = _(newFlights)
+    const updatedIfplIds = _(newFlights)
       // Find common flights
       .filter(isOldFlight)
       // Reject if lastUpdated has not changed
       .reject((f) => {
         const lastUpdated = f.lastUpdated;
-        const cachedLastUpdated = _.get(oldFlightById(f.flightId), 'lastUpdated', -1);
+        const cachedLastUpdated = _.get(oldFlightById(f.ifplId), 'lastUpdated', -1);
         return lastUpdated === cachedLastUpdated;
       })
-      .map(toFlightIds)
+      .map(toIfplId)
       .value();
 
     debug(`Adding %d flights, removing %d flights, updating %d/%d flights`,
-      addedFlightIds.length,
-      removedFlightIds.length,
-      updatedFlightIds.length,
-      commonFlightIds.length
+      addedIfplIds.length,
+      removedIfplIds.length,
+      updatedIfplIds.length,
+      commonIfplIds.length
     );
 
     debug('IDs :');
-    debug('Added: %s', addedFlightIds.join(','));
-    debug('Updated: %s', updatedFlightIds.join(','));
-    debug('Removed: %s', removedFlightIds.join(','));
+    debug('Added: %s', addedIfplIds.join(','));
+    debug('Updated: %s', updatedIfplIds.join(','));
+    debug('Removed: %s', removedIfplIds.join(','));
 
 
-    const isFlightAdded = (f) => _.includes(addedFlightIds, f.flightId);
-    const isFlightUpdated = (f) => _.includes(updatedFlightIds, f.flightId);
-    const isFlightRemoved = (f) => _.includes(removedFlightIds, f.flightId);
+    const isFlightAdded = (f) => _.includes(addedIfplIds, toIfplId(f));
+    const isFlightUpdated = (f) => _.includes(updatedIfplIds, toIfplId(f));
+    const isFlightRemoved = (f) => _.includes(removedIfplIds, toIfplId(f));
 
     const normalizeFilteredFlightsBy = (filter) => normalizeXmanData(_.merge({}, _.omit(data, 'flights'), {flights: _.filter(data.flights, filter)}));
 
     const normalizedAddedFlights = normalizeFilteredFlightsBy(isFlightAdded);
     const normalizedUpdatedFlights = normalizeFilteredFlightsBy(isFlightUpdated);
 
-    const flightsAreAdded = !_.isEmpty(addedFlightIds);
-    const flightsAreUpdated = !_.isEmpty(updatedFlightIds);
-    const flightsAreRemoved = !_.isEmpty(removedFlightIds);
+    const flightsAreAdded = !_.isEmpty(addedIfplIds);
+    const flightsAreUpdated = !_.isEmpty(updatedIfplIds);
+    const flightsAreRemoved = !_.isEmpty(removedIfplIds);
 
 
     if(flightsAreAdded) {
@@ -188,11 +209,14 @@ export function updateFlightList(data) {
       // Update internal tree
       dispatch(removeFlightsAction({
         lastFetched: data.lastFetched,
-        flightIds: removedFlightIds
+        ifplIds: removedIfplIds
       }));
     }
 
-
+    return {
+      normalizedAddedFlights,
+      normalizedUpdatedFlights,
+    };
   }
 }
 
@@ -237,7 +261,7 @@ function removeFlightsAction(data) {
     type: REMOVE_FLIGHTS,
     lastUpdated: Date.now(),
     lastFetched: data.lastFetched,
-    flightIds: data.flightIds
+    ifplIds: data.ifplIds
   };
 }
 

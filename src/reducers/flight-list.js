@@ -23,20 +23,20 @@ export default function reducer(state = defaultState, action) {
       return {
         lastUpdated: Date.now(),
         lastFetched: action.lastFetched,
-        flights: merge({}, action.entities.flights)
+        flights: merge({}, action.entities.flights),
       };
     case REMOVE_FLIGHTS:
       return {
         lastUpdated: Date.now(),
         lastFetched: action.lastFetched || Date.now(),
-        flights: _.omit(state.flights, action.flightIds)
+        flights: _.omit(state.flights, action.ifplIds),
       };
     case ADD_FLIGHTS:
     case UPDATE_FLIGHTS:
       return {
         lastUpdated: Date.now(),
         lastFetched: action.lastFetched || Date.now(),
-        flights: merge({}, state.flights, action.entities.flights)
+        flights: merge({}, state.flights, action.entities.flights),
       };
   }
 

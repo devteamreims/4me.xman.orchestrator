@@ -2,6 +2,8 @@ import express from 'express';
 
 import {getXmanRouter} from './controller';
 
+import {updateFlights} from './actions/flight-list';
+
 const routes = function(store) {
 
   let router = express.Router();

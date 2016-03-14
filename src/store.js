@@ -11,14 +11,20 @@ import {initializeSocket} from './actions/socket';
 import reducers from './reducers';
 import {updatePositions} from './actions/positions';
 
-import {firstStep, secondStep, thirdStep} from './actions/flight-list';
+import {
+  firstStep,
+  secondStep,
+  thirdStep,
+  updateFlights,
+} from './actions/flight-list';
+
 import {commitCurrentStatus} from './actions/current-statuses';
 
 import {getSocket} from './socket';
 
 export default function makeStore(socketIo) {
   debug('Creating store');
-  
+
   const logger = createLogger({
     logger: {
       log: d('4me.redux.logger'),
@@ -27,11 +33,12 @@ export default function makeStore(socketIo) {
   });
 
   const store = createStore(reducers, applyMiddleware(thunk, deepFreeze, logger));
-  
+
   // Initialize socketIo
   store.dispatch(initializeSocket(socketIo));
 
 
+/*
   // Example step
   store.dispatch(firstStep());
   store.dispatch(updatePositions());
@@ -39,15 +46,25 @@ export default function makeStore(socketIo) {
   // X seconds later, dispatch secondStep
   setTimeout(() => store.dispatch(secondStep()), 5000);
   setTimeout(() => store.dispatch(thirdStep()), 10000);
-  
+*/
 
-  const periodicPositionUpdate = () => setTimeout(() => {
-    store.dispatch(updatePositions())
-    periodicPositionUpdate();
-  }, 10000);
+  const periodicFlightUpdate = () => store.dispatch(updateFlights());
+  const periodicPositionUpdate = () => store.dispatch(updatePositions());
 
-  periodicPositionUpdate();
+  setInterval(periodicFlightUpdate, 1000*60);
+  setInterval(periodicPositionUpdate, 1000*30);
 
+  setTimeout(() => {
+    periodicFlightUpdate()
+      .then(() => periodicPositionUpdate());
+  }, 200);
+
+  //demoChanges(store);
+
+  return store;
+}
+
+function demoChanges(store) {
   const periodicRemove = () => setTimeout(() => {
     const socket = getSocket();
     const flightsToRemove = ['a12346', 'BLABLA'];
@@ -97,6 +114,4 @@ export default function makeStore(socketIo) {
   //demoChanges();
   //demoChanges2();
 
-
-  return store;
 }

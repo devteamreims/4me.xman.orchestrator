@@ -5,8 +5,11 @@ import merge from 'lodash/merge';
 
 import {stubPositionData} from '../stubData';
 
+import rp from 'request-promise';
+
+const request = rp;
+
 import {
-  getFlights,
   getFlightsWithData,
   getSortedFlightsInFilterWithData
 } from '../selectors/flight';
@@ -19,6 +22,10 @@ import {
   getSocket,
   sendFlightListUpdate
 } from '../socket';
+
+import {
+  getFlights,
+} from '../selectors/flight-list';
 
 
 
@@ -34,12 +41,65 @@ export function updatePositionsAction(positions) {
 
 export function updatePositions() {
   return (dispatch, getState) => {
-    const flightIds = _.keys(getFlights(getState()));
-    debug('Fetching positions for flights with IDs : [%s]', flightIds.join(','));
-    
-    const fetchPromise = new Promise((fulfill) => setTimeout(() => fulfill(_.cloneDeep(stubPositionData())), 5000));
+    const flights = getFlights(getState());
+    const ifplIds = _.keys(flights);
+    debug('Fetching positions for flights with IDs : [%s]', ifplIds.join(','));
 
-    const oldState = _.cloneDeep(getState());
+    const assocArray = _.map(flights, (f, key) => ({arcid: f.arcid, ifplId: key}));
+    const callsigns = _.map(assocArray, f => f.arcid);
+
+    const url = process.env.POSITIONS_URL;
+
+    const reqParams = {
+      callsigns,
+    };
+
+    const normalizePositionData = (assocArray) => (rawData) => {
+      const arcidToIfplId = (arcid) => _.get(_.find(assocArray, f => f.arcid === arcid), 'ifplId');
+
+      const when = rawData.lastFetched;
+
+      const flights = _.reduce(rawData.flights, (prev, pos) => {
+        const arcid = pos.callsign;
+        const ifplId = arcidToIfplId(arcid);
+        const vertical = {
+          currentFlightLevel: Math.floor(parseInt(pos.alt)/100),
+        };
+        const horizontal = {
+          long: pos.long,
+          lat: pos.lat,
+        };
+
+        const toMerge = {
+          [ifplId]: {
+            when,
+            vertical,
+            horizontal,
+          }
+        };
+
+        return Object.assign(prev, toMerge);
+      }, {});
+
+      return Object.assign({}, rawData, {flights});
+    };
+
+    return request({
+      url,
+      qs: reqParams,
+    })
+      .then(data => {
+        debug('Got position data');
+        return JSON.parse(data);
+      })
+      .then(normalizePositionData(assocArray))
+      .then(data => {
+        debug('Normalized data :');
+        debug(data);
+        return dispatch(updatePositionsAction(data.flights));
+      });
+
+
 
     return fetchPromise
     // Format our data
@@ -47,7 +107,7 @@ export function updatePositions() {
       .then((data) => dispatch(updatePositionsAction(data)))
       .then(() => sendNotifications(getState))
       .catch((err) => debug(err));
-    
+
   }
 }
 
@@ -81,19 +141,4 @@ function sendNotifications(getState) {
   });
 
   return Promise.resolve();
-}
-
-function formatPositionData(rawData) {
-  /*
-   * Turn this : [{flightId: XXXX, ...}]
-   * into this : {'flightId' : {...}}
-   */
-
-  let ret = {};
-  _.each(_.cloneDeep(rawData), p => {
-    ret[p.flightId] = p;
-    delete ret[p.flightId].flightId;
-  });
-
-  return ret;
 }
