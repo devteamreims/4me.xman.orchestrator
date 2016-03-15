@@ -74,12 +74,21 @@ export function isInVerticalSector(sectorName, destinationName, flightLevel) {
 
   if(_.isEmpty(destination)) {
     console.log(`${sectorName} : ${destinationName} is unknown`);
-    return true;
+    return false;
   }
+
+  if(_.isEmpty(destination.vertical)) {
+    console.log(`${sectorName} : ${destinationName} has no vertical limits defined`);
+    return false;
+  }
+
+  const {min, max} = destination.vertical;
 
   flightLevel = parseInt(flightLevel);
 
-  return flightLevel >= destination.vertical.max && flightLevel <= destination.vertical.min;
+  console.log(`Comparing current FL : ${flightLevel} with min: ${min}, max: ${max}`);
+
+  return _.inRange(flightLevel, min, max);
 }
 
 const testCoords = [

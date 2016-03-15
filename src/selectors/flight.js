@@ -60,6 +60,9 @@ export function isFlightInFilter(filter) {
 
     const inArea = _.some(sectors, (sector) => isInSectorArea(sector, flight));
 
+    debug(`Checking if ${flight.ifplId} is in ${sectors.join(',')} vertical limits`);
+    debug(flight);
+
     const inVerticalLimits = !verticalFilter || _.some(sectors, (sector) => isInSectorVerticalArea(sector, flight));
 
 
@@ -93,13 +96,16 @@ function isInSectorArea(sector, flight) {
 }
 
 function isInSectorVerticalArea(sector, flight) {
-
-  debug(`Checking if ${flight.ifplId} is in ${sector} vertical limits`);
-
   const currentFlightLevel = _.get(flight, 'position.vertical.currentFlightLevel', 0);
+  if(!currentFlightLevel) {
+    return true;
+  }
+
   const destination = _.get(flight, 'destination');
 
-  debug(`Flight is going to ${destination}, current FL is ${currentFlightLevel}`);
+  const result = isInVerticalSector(sector, destination, currentFlightLevel);
+
+  debug(`Calling isInVerticalSector with ${sector}, ${destination}, ${currentFlightLevel} : ${result}`);
 
   return isInVerticalSector(sector, destination, currentFlightLevel);
 }
