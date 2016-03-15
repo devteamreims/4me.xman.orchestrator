@@ -17,25 +17,25 @@ export function combineAllFlightData(state) {
 }
 
 function combineSingleFlight(state) {
-  return (flight, flightId) => Object.assign({}, flight, {
-    flightId,
-    advisory: state.advisories[flightId] || {},
-    currentStatus: state.currentStatuses[flightId] || {},
-    position: state.positions.positions[flightId] || defaultPosition
+  return (flight, ifplId) => Object.assign({}, flight, {
+    ifplId,
+    advisory: state.advisories[ifplId] || {},
+    currentStatus: state.currentStatuses[ifplId] || {},
+    position: state.positions.positions[ifplId] || defaultPosition
   });
 }
 
-export function combineFlightData(state, flightId) {
-  const flight = _.get(state.flightList.flights, flightId);
+export function combineFlightData(state, ifplId) {
+  const flight = _.get(state.flightList.flights, ifplId);
 
   if(flight === undefined) {
     return {};
   }
 
   return Object.assign({}, flight, {
-    flightId,
-    advisory: state.advisories[flightId] || {},
-    currentStatus: state.currentStatuses[flightId] || {},
-    position: state.positions.positions[flightId] || defaultPosition
+    ifplId,
+    advisory: state.advisories[ifplId] || {},
+    currentStatus: state.currentStatuses[ifplId] || {},
+    position: state.positions.positions[ifplId] || defaultPosition
   });
 }

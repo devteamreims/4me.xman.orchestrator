@@ -10,16 +10,16 @@ import {
 } from '../socket';
 
 import {
-  getFlightByFlightIdWithData
+  getFlightByIfplIdWithData,
 } from '../selectors/flight';
 
 export const SET_CURRENT_STATUS = 'SET_CURRENT_STATUS';
 export const SET_CURRENT_STATUSES = 'SET_CURRENT_STATUSES';
 
-function setCurrentStatusAction(flightId, status) {
+function setCurrentStatusAction(ifplId, status) {
   return {
     type: SET_CURRENT_STATUS,
-    flightId,
+    ifplId,
     status
   };
 }
@@ -38,27 +38,27 @@ export function loadFromDb() {
   }
 }
 
-export function commitCurrentStatus(flightId, status) {
+export function commitCurrentStatus(ifplId, status) {
   return (dispatch, getState) => {
     // Sanitize data
-    const flight = getState().flightList.flights[flightId];
+    const flight = getState().flightList.flights[ifplId];
     if(_.isEmpty(flight)) {
-      const msg = `Trying to update status on an unknown flight : ${flightId}`;
+      const msg = `Trying to update status on an unknown flight : ${ifplId}`;
       debug(msg);
       return Promise.reject(msg);
     }
 
     // Save to db
     const dbSave = () => saveToDb(getState().currentStatuses);
-    
+
 
 
     // Dispatch action
-    const dispatchAction = () => Promise.resolve(dispatch(setCurrentStatusAction(flightId, status)));
+    const dispatchAction = () => Promise.resolve(dispatch(setCurrentStatusAction(ifplId, status)));
 
     // Send to socket
     const socket = getSocket();
-    const emitToSocket = () => broadcastFlightUpdate(socket, getFlightByFlightIdWithData(getState(), flightId));
+    const emitToSocket = () => broadcastFlightUpdate(socket, getFlightByIfplIdWithData(getState(), ifplId));
 
     return dispatchAction()
       .then(dbSave)

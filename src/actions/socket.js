@@ -12,8 +12,8 @@ export const SOCKET_CLIENT_DISCONNECTED = 'SOCKET_CLIENT_DISCONNECTED';
 import {setupSocketIo} from '../socket';
 
 import {
-  getFlightByFlightId,
-  getFlightByFlightIdWithData
+  getFlightByIfplId,
+  getFlightByIfplIdWithData,
 } from '../selectors/flight';
 
 import {
@@ -71,7 +71,7 @@ export function setXmanAction(data) {
   // Expect data to be like this :
   /*
   {
-    flightId: XXX,
+    ifplId: XXX,
     xmanAction: {
       speed: XXX,
       machReduction: XXX,
@@ -88,11 +88,11 @@ export function setXmanAction(data) {
   */
   return (dispatch, getState) => {
 
-    const flightId = _.get(data, 'flightId', -1);
-    const flight = getFlightByFlightId(getState(), flightId);
+    const ifplId = _.get(data, 'ifplId', -1);
+    const flight = getFlightByIfplId(getState(), ifplId);
 
     if(_.isEmpty(flight)) {
-      debug(`Got an xman action for an untracked flight ! ${data.flightId}`);
+      debug(`Got an xman action for an untracked flight ! ${data.ifplId}`);
       return Promise.reject();
     }
 
@@ -109,7 +109,7 @@ export function setXmanAction(data) {
     const xmanAction = _.get(data, 'xmanAction', {});
 
 
-    const {currentStatus} = getFlightByFlightIdWithData(getState(), flightId);
+    const {currentStatus} = getFlightByIfplIdWithData(getState(), ifplId);
     const currentMachReduction = _.get(currentStatus, 'machReduction', null);
     const currentSpeed = _.get(currentStatus, 'speed', null);
     const currentMcs = _.get(currentStatus, 'minimumCleanSpeed', null);
@@ -137,7 +137,7 @@ export function setXmanAction(data) {
       minimumCleanSpeed
     };
 
-    return dispatch(commitCurrentStatus(flightId, status));
+    return dispatch(commitCurrentStatus(ifplId, status));
   };
 }
 

@@ -30,7 +30,7 @@ const processed = _.mapValues(sectors, (val, key) => {
 
 console.log(processed);
 
-function isInSector(sectorName, destinationName, rawCoords) {
+export function isInSector(sectorName, destinationName, rawCoords) {
   const sector = _.get(processed, _.toUpper(sectorName));
 
   if(_.isEmpty(sector)) {
@@ -61,6 +61,25 @@ function isInSector(sectorName, destinationName, rawCoords) {
   }
 
   return turf.inside(point, polygon);
+}
+
+export function isInVerticalSector(sectorName, destinationName, flightLevel) {
+  const sector = _.get(processed, _.toUpper(sectorName));
+
+  if(_.isEmpty(sector)) {
+    throw new Error(`${sectorName} : Unknown sector`);
+  }
+
+  const destination = _.get(sector, _.toUpper(destinationName));
+
+  if(_.isEmpty(destination)) {
+    console.log(`${sectorName} : ${destinationName} is unknown`);
+    return true;
+  }
+
+  flightLevel = parseInt(flightLevel);
+
+  return flightLevel >= destination.vertical.max && flightLevel <= destination.vertical.min;
 }
 
 const testCoords = [
