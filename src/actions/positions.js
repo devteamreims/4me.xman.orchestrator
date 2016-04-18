@@ -20,7 +20,7 @@ import {
 
 import {
   getSocket,
-  sendFlightListUpdate
+  sendFlightListUpdate,
 } from '../socket';
 
 import {
@@ -97,7 +97,9 @@ export function updatePositions() {
         debug('Normalized data :');
         debug(data);
         return dispatch(updatePositionsAction(data.flights));
-      });
+      })
+      .then(() => sendNotifications(getState))
+      .catch(err => debug(err));
 
 
 
@@ -118,6 +120,8 @@ function sendNotifications(getState) {
   const debug = d('4me.positions.actions.notifier');
 
   const newState = getState();
+
+  console.log('POUET POUET');
 
   debug('Now : ' + Date.now());
   debug('newState.lastFetched : ' + newState.positions.lastFetched);

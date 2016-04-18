@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "babel-node": "babel-node server.js",
-    "dev": "DEBUG=4me.* npm run start",
+    "dev": "DEBUG=-4me.selectors.flight,-4me.redux.logger,4me.* npm run start",
     "coords": "babel-node coords.js",
     "start": "nodemon --exec npm run babel-node",
     "test": "NODE_ENV=test mocha --compilers js:babel-register --recursive"
