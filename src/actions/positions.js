@@ -107,16 +107,6 @@ export function updatePositions() {
       })
       .then(() => sendNotifications(getState))
       .catch(err => debug(err));
-
-
-
-    return fetchPromise
-    // Format our data
-      .then(formatPositionData)
-      .then((data) => dispatch(updatePositionsAction(data)))
-      .then(() => sendNotifications(getState))
-      .catch((err) => debug(err));
-
   }
 }
 
