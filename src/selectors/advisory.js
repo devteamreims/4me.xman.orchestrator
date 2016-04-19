@@ -1,5 +1,7 @@
 import _ from 'lodash';
 
+const getRaw = (state) => _.get(state, 'advisories');
+
 export const getMachReductionFromAdvisory = (advisory) => {
   const delay = _.get(advisory, 'delay', 0);
   switch(true) {
@@ -15,3 +17,6 @@ export const getMachReductionFromAdvisory = (advisory) => {
       return 0;
   }
 }
+
+
+export const getAdvisoryByIfplId = (state, ifplId) => _.get(getRaw(state), ifplId);

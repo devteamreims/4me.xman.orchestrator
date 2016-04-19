@@ -39,3 +39,7 @@ export function combineFlightData(state, ifplId) {
     position: state.positions.positions[ifplId] || defaultPosition
   });
 }
+
+export function flightToString(flight) {
+  return `${flight.arcid}/${flight.ifplId}`;
+}

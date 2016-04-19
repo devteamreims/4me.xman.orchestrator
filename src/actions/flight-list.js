@@ -7,12 +7,6 @@ import rp from 'request-promise';
 
 const request = rp;
 
-import {
-  stubXmanData,
-  stubXmanDataPlusOne,
-  stubXmanDataMinusOne
-} from '../stubData';
-
 import {combineAllFlightData} from '../utils/flight';
 
 export const SET_INITIAL_FLIGHT_LIST = 'SET_INITIAL_FLIGHT_LIST';
@@ -26,6 +20,20 @@ import {
   getFlights,
 } from '../selectors/flight-list';
 
+import {
+  getAdvisoryByIfplId,
+} from '../selectors/advisory';
+
+import {
+  shouldAddFlight,
+  shouldAdvisoryUpdate,
+  prepareAdvisory,
+} from '../hooks';
+
+import {
+  lifecycleLogger,
+} from '../logger';
+
 export function updateFlights() {
   return (dispatch, getState) => {
     const url = process.env.EGLL_PARSER_URL;
@@ -35,26 +43,10 @@ export function updateFlights() {
       .then(rawData => {
         debug('Got data from backend');
         return dispatch(updateFlightList(rawData));
-      });
+      })
+      // Parser is down
+      .catch(err => debug(err));
   };
-}
-
-export function getInitialFlightList(data) {
-  return (dispatch, getState) => {
-
-    if(data === undefined) {
-      data = stubXmanData;
-    }
-
-    const normalizedData = normalizeXmanData(data);
-
-    debug(normalizedData);
-
-    debug('Fetching initial xman data');
-    debug('Got %d flights from backend', _.size(normalizedData.entities.flights));
-
-    dispatch(setFlightListAction(normalizedData));
-  }
 }
 
 function normalizeXmanData(data) {
@@ -93,7 +85,7 @@ function normalizeXmanData(data) {
     const ifplId = flight.ifplId;
 
     toMerge.flights[ifplId] = _.omit(flight, ['advisory']);
-    toMerge.advisories[ifplId] = advisory;
+    toMerge.advisories[ifplId] = prepareAdvisory(flight, advisory);
 
     return {
       flights: _.merge({}, prev.flights, toMerge.flights),
@@ -108,11 +100,6 @@ function normalizeXmanData(data) {
 
 export function updateFlightList(data) {
   return (dispatch, getState) => {
-    /*
-    if(isFirstRun(getState())) {
-      return setFlightListAction(data);
-    }
-    */
 
     // Process data for updating, this is our main refresh point
     // We diff the existing flightList with the provided flightList
@@ -121,15 +108,16 @@ export function updateFlightList(data) {
     const trackedFlightCount = _.size(getFlights(getState()));
     const updatedFlightCount = _.size(data.flights);
 
-    debug('Backend was updated %s', moment(data.lastFetched).fromNow());
-    debug(
+    lifecycleLogger('Backend was updated %s', moment(data.lastFetched).fromNow());
+    lifecycleLogger(
       'Currently tracking %d flights, got %d flights from backend',
       trackedFlightCount,
       updatedFlightCount
     );
 
     const oldFlights = getFlights(getState());
-    const newFlights = data.flights;
+    // Plug in our hook
+    const newFlights = _.filter(data.flights, shouldAddFlight);
 
     // Slightly different syntax here, since we have a different data format
     // newFlights hasn't been normalized yet
@@ -168,7 +156,7 @@ export function updateFlightList(data) {
       .map(toIfplId)
       .value();
 
-    debug(`Adding %d flights, removing %d flights, updating %d/%d flights`,
+    lifecycleLogger(`Adding %d flights, removing %d flights, updating %d/%d flights`,
       addedIfplIds.length,
       removedIfplIds.length,
       updatedIfplIds.length,
@@ -201,6 +189,21 @@ export function updateFlightList(data) {
     }
 
     if(flightsAreUpdated) {
+      // Plug in our shouldAdvisoryUpdate hook
+      const postHookAdvisories = _.mapValues(normalizedUpdatedFlights.entities.advisories, (newAdv, ifplId) => {
+        const flight = _.get(normalizedUpdatedFlights.entities.flights, ifplId);
+        const oldAdv = getAdvisoryByIfplId(getState(), ifplId);
+
+        if(!shouldAdvisoryUpdate(flight, oldAdv, newAdv)) {
+          return oldAdv;
+        }
+
+        return newAdv;
+      });
+
+      normalizedUpdatedFlights.entities.advisories = postHookAdvisories;
+
+
       // Update our internal tree
       dispatch(updateFlightsAction(normalizedUpdatedFlights));
     }
@@ -218,24 +221,6 @@ export function updateFlightList(data) {
       normalizedUpdatedFlights,
     };
   }
-}
-
-
-export function firstStep() {
-  debug('Dispatching flightList first step');
-  return getInitialFlightList(_.cloneDeep(stubXmanData));
-}
-
-export function secondStep() {
-  debug('Dispatching flightList second step');
-  const data = stubXmanDataMinusOne();
-  return updateFlightList(data);
-}
-
-export function thirdStep() {
-  debug('Dispatching flightList third step');
-  const data = stubXmanDataPlusOne(stubXmanDataMinusOne());
-  return updateFlightList(data);
 }
 
 function setFlightListAction(data) {

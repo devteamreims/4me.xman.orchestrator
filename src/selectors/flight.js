@@ -30,10 +30,7 @@ import {
 function combineSingleFlight(state) {
   return (flight, ifplId) => Object.assign({}, flight, {
     ifplId,
-    advisory: {
-      ...state.advisories[ifplId],
-      machReduction: getMachReductionFromAdvisory(state.advisories[ifplId]),
-    },
+    advisory: state.advisories[ifplId] || {},
     currentStatus: state.currentStatuses[ifplId] || {},
     position: state.positions.positions[ifplId] || defaultPosition
   });

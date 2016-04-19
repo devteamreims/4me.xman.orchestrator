@@ -62,9 +62,16 @@ export function updatePositions() {
       const flights = _.reduce(rawData.flights, (prev, pos) => {
         const arcid = pos.callsign;
         const ifplId = arcidToIfplId(arcid);
+
+        let currentFlightLevel = Math.floor(parseInt(pos.alt)/100);
+        if(currentFlightLevel % 10 <= 2 || currentFlightLevel % 10 >= 8) {
+          currentFlightLevel = Math.round(currentFlightLevel / 10) * 10;
+        }
+
         const vertical = {
-          currentFlightLevel: Math.floor(parseInt(pos.alt)/100),
+          currentFlightLevel,
         };
+
         const horizontal = {
           long: pos.long,
           lat: pos.lat,
@@ -120,12 +127,6 @@ function sendNotifications(getState) {
   const debug = d('4me.positions.actions.notifier');
 
   const newState = getState();
-
-  console.log('POUET POUET');
-
-  debug('Now : ' + Date.now());
-  debug('newState.lastFetched : ' + newState.positions.lastFetched);
-
   debug('Sending notifications to subscribers');
 
   const clients = getClients(getState());
@@ -141,7 +142,6 @@ function sendNotifications(getState) {
     debug(subscribedFlights);
 
     sendFlightListUpdate(socket, client.id, subscribedFlights);
-
   });
 
   return Promise.resolve();
