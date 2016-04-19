@@ -22,6 +22,7 @@ export function shouldAddFlight(flight) {
   const destination = _.get(flight, 'destination');
   const cop = _.get(flight, 'cop');
   const etoCop = moment.utc(_.get(flight, 'advisory.estimatedTime'));
+  const delay = _.get(flight, 'delay');
 
   if(destination === 'EGLL') {
 
@@ -29,6 +30,11 @@ export function shouldAddFlight(flight) {
 
     if(cop !== 'ABNUR') {
       lifecycleLogger(`Reject flight ${flightToString(flight)} : COP is ${cop}`);
+      return false;
+    }
+
+    if(delay === -1) {
+      lifecycleLogger(`Reject flight ${flightToString(flight)} : Total delay is -1, flight hasn't been captured by AMAN yet`);
       return false;
     }
 
