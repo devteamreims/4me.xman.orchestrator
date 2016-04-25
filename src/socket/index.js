@@ -9,11 +9,6 @@ import {
   setXmanAction
 } from '../actions/socket';
 
-import {
-  getFlightsWithData
-} from '../selectors/flight';
-
-
 let mySocket;
 
 // Global socketIo object event handler
