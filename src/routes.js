@@ -12,12 +12,24 @@ const routes = function(store) {
 
   router.get('/getState', getStateController(store));
 
+  router.get('/status', getStatusController(store));
+
   return router;
 };
 
 function getStateController(store) {
   return (req, res, next) => {
     res.send(store.getState());
+  };
+}
+
+import {
+  getPrettyStatus,
+} from './selectors/status';
+
+function getStatusController(store) {
+  return (req, res, next) => {
+    res.send(getPrettyStatus(store.getState()));
   };
 }
 

@@ -34,6 +34,11 @@ import {
   lifecycleLogger,
 } from '../logger';
 
+import {
+  escalateFetcher,
+  recoverFetcher,
+} from './status';
+
 export function updateFlights() {
   return (dispatch, getState) => {
     const url = process.env.EGLL_PARSER_URL;
@@ -42,10 +47,14 @@ export function updateFlights() {
       .then(rawData => JSON.parse(rawData))
       .then(rawData => {
         debug('Got data from backend');
+
+        dispatch(recoverFetcher('EGLL'));
         return dispatch(updateFlightList(rawData));
       })
       // Parser is down
-      .catch(err => debug(err));
+      .catch(err => {
+        return dispatch(escalateFetcher('EGLL', 'Something went wrong fetching EGLL flights'));
+      });
   };
 }
 

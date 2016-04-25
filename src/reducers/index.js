@@ -5,6 +5,7 @@ import flightListReducer from './flight-list';
 import advisoryReducer from './advisories';
 import positionsReducer from './positions';
 import currentStatusesReducer from './current-statuses';
+import status from './status';
 
 
 export default combineReducers({
@@ -12,5 +13,6 @@ export default combineReducers({
   flightList: flightListReducer,
   advisories: advisoryReducer,
   positions: positionsReducer,
-  currentStatuses: currentStatusesReducer
+  currentStatuses: currentStatusesReducer,
+  status,
 });

@@ -4,6 +4,8 @@ import thunk from 'redux-thunk';
 import createLogger from 'redux-logger';
 import deepFreeze from 'redux-freeze';
 
+import _ from 'lodash';
+
 import d from 'debug';
 const debug = d('4me.redux');
 
@@ -45,6 +47,19 @@ export default function makeStore(socketIo) {
       .then(() => periodicPositionUpdate());
   }, 200);
 
+  installSubscriptions(store);
 
   return store;
+}
+
+
+import {
+  getSubscribers,
+} from './subscribers';
+
+function installSubscriptions(store) {
+  // Status change subscription
+  const subscriptions = getSubscribers(store);
+
+  const unsubscribeHandlers = _.mapValues(subscriptions, s => store.subscribe(s));
 }

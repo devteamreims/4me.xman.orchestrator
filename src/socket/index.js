@@ -39,7 +39,7 @@ export function getSocket() {
 // Per client socket event handler
 export function attachHandlerToSocket(dispatch, socket) {
   debug('Attaching socket handlers to client with id : %s', socket.id);
-  
+
   socket.on('set_subscription_filter', (data) => {
     debug('set_subscription_filter');
     dispatch(setSubscriptionFilter(socket.id, data));
@@ -62,4 +62,8 @@ export function sendFlightListUpdate(mainSocket, clientId, flights) {
 export function broadcastFlightUpdate(mainSocket, flight) {
   debug(flight);
   mainSocket.emit('update_flight', flight);
+}
+
+export function broadcastStatusUpdate(mainSocket, status) {
+  mainSocket.emit('update_status', status);
 }

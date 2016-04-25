@@ -27,7 +27,10 @@ import {
   getFlights,
 } from '../selectors/flight-list';
 
-
+import {
+  escalatePositions,
+  recoverPositions,
+} from './status';
 
 export const UPDATE_POSITIONS = 'UPDATE_POSITIONS';
 
@@ -106,7 +109,13 @@ export function updatePositions() {
         return dispatch(updatePositionsAction(data.flights));
       })
       .then(() => sendNotifications(getState))
-      .catch(err => debug(err));
+      .then(() => dispatch(recoverPositions()))
+      .catch(err => {
+        debug('Failed to fetch positions !');
+        debug(err);
+
+        return dispatch(escalatePositions('Something went wrong fetching flight positions'));
+      });
   }
 }
 
