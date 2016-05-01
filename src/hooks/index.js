@@ -73,12 +73,35 @@ export function shouldAdvisoryUpdate(flight, oldAdvisory, newAdvisory) {
   return false;
 }
 
+function isNightTime(flight, advisory) {
+  const rawTto = _.get(advisory, 'targetTime');
+  const tto = moment.utc(rawTto);
+
+  const nightStart = tto.isDST() ? moment.utc(rawTto).hours(22).startOf('hour') : moment.utc(rawTto).hours(21).startOf('hour');
+  const nightEnd = tto.isDST() ? moment.utc(rawTto).hours(6).minutes(30).startOf('minute') : moment.utc(rawTto).hours(5).minutes(30).startOf('minute');
+  debug(
+    'Comparing %s with start: %s / end %s : %s',
+    tto.format(),
+    nightStart.format(),
+    nightEnd.format(),
+    (tto.isBefore(nightStart) || tto.isAfter(nightEnd)) ? 'night mode' : 'day mode'
+  );
+  return tto.isBefore(nightStart) || tto.isAfter(nightEnd);
+}
+
 export function prepareAdvisory(flight, advisory) {
   const destination = _.get(flight, 'destination');
 
   if(destination === 'EGLL') {
     const getMachReduction = () => {
       const delay = _.get(advisory, 'delay', 0);
+      const tto = moment(_.get(advisory, 'targetTime'));
+
+      // Implement sleep mode here
+      if(isNightTime(flight, advisory)) {
+        return 0;
+      }
+
       switch(true) {
         case (delay >= 60*3):
           return 4;
