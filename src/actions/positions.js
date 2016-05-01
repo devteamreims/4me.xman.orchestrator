@@ -32,13 +32,29 @@ import {
   recoverPositions,
 } from './status';
 
+import {
+  shouldFlightBeCaptured,
+} from '../hooks';
+
+import {
+  lifecycleLogger,
+} from '../logger';
+
 export const UPDATE_POSITIONS = 'UPDATE_POSITIONS';
+export const CAPTURE_FLIGHTS = 'CAPTURE_FLIGHTS';
 
 export function updatePositionsAction(positions) {
   return {
     type: UPDATE_POSITIONS,
     positions: positions,
     lastFetched: Date.now()
+  };
+}
+
+export function captureFlightsAction(ifplIds) {
+  return {
+    type: CAPTURE_FLIGHTS,
+    ifplIds,
   };
 }
 
@@ -103,12 +119,36 @@ export function updatePositions() {
         return JSON.parse(data);
       })
       .then(normalizePositionData(assocArray))
+      // Update positions
       .then(data => {
         debug('Normalized data :');
         debug(data);
         return dispatch(updatePositionsAction(data.flights));
       })
+      // Set captured flag
+      .then(() => {
+        const flights = getFlightsWithData(getState());
+        const capturedIfplIds = _.reduce(flights, (prev, flight) => {
+          if(shouldFlightBeCaptured(flight) && flight.captured === false) {
+            return [...prev, flight.ifplId];
+          }
+          return prev;
+        }, []);
+
+        if(capturedIfplIds.length) {
+          lifecycleLogger(
+            'Capturing %d flights : %s',
+            capturedIfplIds.length,
+            capturedIfplIds.join(',')
+          );
+          return dispatch(captureFlightsAction(capturedIfplIds));
+        } else {
+          return;
+        }
+      })
+      // Send notifications to socket
       .then(() => sendNotifications(getState))
+      // Recover status
       .then(() => dispatch(recoverPositions()))
       .catch(err => {
         debug('Failed to fetch positions !');

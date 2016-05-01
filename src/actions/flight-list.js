@@ -53,8 +53,27 @@ export function updateFlights() {
       })
       // Parser is down
       .catch(err => {
+        debug(err);
         return dispatch(escalateFetcher('EGLL', 'Something went wrong fetching EGLL flights'));
       });
+  };
+}
+
+function prepareRawFlight(flight) {
+  const rawFields = [
+    'ifplId',
+    'destination',
+    'arcid',
+    'cop',
+    'delay',
+    'advisory',
+  ];
+
+  // This allows a flight without the captured field set to be set to 'false'
+  // Updating flights will already have a captured field present and will override this default
+  return {
+    captured: false,
+    ..._.pick(flight, rawFields),
   };
 }
 
@@ -89,7 +108,7 @@ function normalizeXmanData(data) {
     const toMerge = {flights: {}, advisories: {}};
 
     // Deal with flights
-    const flight = _.clone(f);
+    const flight = prepareRawFlight(f);
     const advisory = _.clone(f.advisory);
     const ifplId = flight.ifplId;
 
@@ -134,8 +153,8 @@ export function updateFlightList(data) {
     const newIfplIds = _.map(newFlights, toIfplId);
     const oldIfplIds = _.keys(oldFlights);
 
-
-
+    // Add a 'captured' field to flights, default to false
+    // This will be set to true when updating positions
     const addedIfplIds = _(newFlights)
       .map(toIfplId)
       .without(...oldIfplIds)

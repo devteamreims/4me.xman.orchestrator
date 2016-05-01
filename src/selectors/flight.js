@@ -22,18 +22,25 @@ export const getFlightByIfplId = (state, ifplId) => _.get(getFlights(state), ifp
 export const getFlightsWithData = (state) => _.map(getFlights(state), combineSingleFlight(state));
 export const getFlightByIfplIdWithData = (state, ifplId) => combineSingleFlight(state)(getFlightByIfplId(state, ifplId), ifplId);
 
-
-import {
-  getMachReductionFromAdvisory,
-} from './advisory';
-
 function combineSingleFlight(state) {
-  return (flight, ifplId) => Object.assign({}, flight, {
-    ifplId,
-    advisory: state.advisories[ifplId] || {},
-    currentStatus: state.currentStatuses[ifplId] || {},
-    position: state.positions.positions[ifplId] || defaultPosition
-  });
+  return (flight, ifplId) => {
+    // If the flight is not captured yet, override the advisory
+    let advisory;
+    if(!flight.captured) {
+      advisory = Object.assign({}, state.advisories[ifplId], {
+        machReduction: 0,
+      });
+    } else {
+      advisory = state.advisories[ifplId] || {};
+    }
+
+    return Object.assign({}, flight, {
+      ifplId,
+      advisory,
+      currentStatus: state.currentStatuses[ifplId] || {},
+      position: state.positions.positions[ifplId] || defaultPosition
+    });
+  };
 }
 
 

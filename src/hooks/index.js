@@ -52,6 +52,12 @@ export function shouldAddFlight(flight) {
 
 export function shouldAdvisoryUpdate(flight, oldAdvisory, newAdvisory) {
   const destination = _.get(flight, 'destination');
+  const isFlightCaptured = _.get(flight, 'captured');
+
+  if(!isFlightCaptured) {
+    // Flight is not captured, update advisory
+    return true;
+  }
 
   if(destination === 'EGLL') {
     if(oldAdvisory.machReduction < newAdvisory.machReduction) {
@@ -71,7 +77,7 @@ export function prepareAdvisory(flight, advisory) {
   const destination = _.get(flight, 'destination');
 
   if(destination === 'EGLL') {
-    const getDelay = () => {
+    const getMachReduction = () => {
       const delay = _.get(advisory, 'delay', 0);
       switch(true) {
         case (delay >= 60*3):
@@ -86,8 +92,25 @@ export function prepareAdvisory(flight, advisory) {
           return 0;
       }
     };
-    return Object.assign({}, advisory, {machReduction: getDelay()});
+    return Object.assign({}, advisory, {machReduction: getMachReduction()});
   }
 
   return advisory;
+}
+
+export function shouldFlightBeCaptured(flight) {
+  const destination = _.get(flight, 'destination');
+
+  console.log(flight);
+
+  if(destination === 'EGLL') {
+    const flightLevel = _.get(flight, 'position.vertical.currentFlightLevel');
+    if(flightLevel >= 380) {
+      return true;
+    }
+    // Introduce some sort of geo filtering here
+    return false;
+  }
+
+  return false;
 }

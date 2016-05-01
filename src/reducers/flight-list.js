@@ -10,6 +10,10 @@ import {
   UPDATE_FLIGHTS
 } from '../actions/flight-list';
 
+import {
+  CAPTURE_FLIGHTS,
+} from '../actions/positions';
+
 const defaultState = {
   lastFetched: null,
   lastUpdated: null,
@@ -38,6 +42,13 @@ export default function reducer(state = defaultState, action) {
         lastFetched: action.lastFetched || Date.now(),
         flights: merge({}, state.flights, action.entities.flights),
       };
+    case CAPTURE_FLIGHTS:
+      const {ifplIds} = action;
+      if(_.isEmpty(ifplIds)) {
+        return state;
+      }
+      const flights = _.mapValues(state.flights, (f, ifplId) => _.includes(ifplIds, ifplId) ? merge({}, f, {captured: true}) : f);
+      return Object.assign({}, state, {flights});
   }
 
   return state;

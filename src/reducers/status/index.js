@@ -4,6 +4,7 @@ import _ from 'lodash';
 
 import {combineReducers} from 'redux';
 import fetchers from './fetchers';
+import positions from './positions';
 
 import {
   ESCALATE_FETCHER,
@@ -16,10 +17,6 @@ const defaultPositionState = {
   status: 'normal',
   lastUpdated: null,
 };
-
-function positions(state = defaultPositionState, action) {
-  return state;
-}
 
 export default combineReducers({
   fetchers,
