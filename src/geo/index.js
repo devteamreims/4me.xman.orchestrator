@@ -96,5 +96,5 @@ export function isInFreezeArea(destinationName, rawCoords) {
 
   const freezeSectors = ['KN'];
 
-  return _.some(captureSectors, s => isInSectorArea(s, destinationName, rawCoords));
+  return _.some(freezeSectors, s => isInSectorArea(s, destinationName, rawCoords));
 }

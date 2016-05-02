@@ -34,6 +34,7 @@ import {
 
 import {
   shouldFlightBeCaptured,
+  shouldFlightBeFrozen,
 } from '../hooks';
 
 import {
@@ -46,6 +47,7 @@ import {
 
 export const UPDATE_POSITIONS = 'UPDATE_POSITIONS';
 export const CAPTURE_FLIGHTS = 'CAPTURE_FLIGHTS';
+export const FREEZE_FLIGHTS = 'FREEZE_FLIGHTS';
 
 export function updatePositionsAction(positions) {
   return {
@@ -58,6 +60,13 @@ export function updatePositionsAction(positions) {
 export function captureFlightsAction(ifplIds) {
   return {
     type: CAPTURE_FLIGHTS,
+    ifplIds,
+  };
+}
+
+export function freezeFlightsAction(ifplIds) {
+  return {
+    type: FREEZE_FLIGHTS,
     ifplIds,
   };
 }
@@ -129,26 +138,39 @@ export function updatePositions() {
         debug(data);
         return dispatch(updatePositionsAction(data.flights));
       })
-      // Set captured flag
+      // Set captured and freeze flag
       .then(() => {
         const flights = getFlightsWithData(getState());
 
         const capturedFlights = _.filter(flights, flight => {
-          return shouldFlightBeCaptured(flight) && flight.captured === false;
+          const isFlightAlreadyCaptured = _.get(flight, 'captured', false);
+          return shouldFlightBeCaptured(flight) && !isFlightAlreadyCaptured;
         });
-
         const capturedIfplIds = _.map(capturedFlights, flight => flight.ifplId);
 
-        if(capturedIfplIds.length) {
-          lifecycleLogger(
-            'Capturing %d flights : %s',
-            capturedIfplIds.length,
-            _.map(capturedFlights, flightToString).join(',')
-          );
-          return dispatch(captureFlightsAction(capturedIfplIds));
-        } else {
-          return;
+        const frozenFlights = _.filter(flights, flight => {
+          const isFlightAlreadyFrozen = _.get(flight, 'frozen', false);
+          return shouldFlightBeFrozen(flight) && !isFlightAlreadyFrozen;
+        });
+        const frozenIfplIds = _.map(frozenFlights, flight => flight.ifplId);
+
+        if(!_.isEmpty(capturedIfplIds)) {
+          _.each(capturedFlights, (f) => lifecycleLogger(
+            '[%s] is now captured',
+            flightToString(f)
+          ));
+          dispatch(captureFlightsAction(capturedIfplIds));
         }
+
+        if(!_.isEmpty(frozenIfplIds)) {
+          _.each(frozenFlights, f => lifecycleLogger(
+            '[%s] is now frozen',
+            flightToString(f)
+          ));
+          dispatch(freezeFlightsAction(frozenIfplIds));
+        }
+
+        return;
       })
       // Send notifications to socket
       .then(() => sendNotifications(getState))

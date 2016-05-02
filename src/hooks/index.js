@@ -52,7 +52,13 @@ export function shouldAddFlight(flight) {
 
 export function shouldAdvisoryUpdate(flight, oldAdvisory, newAdvisory) {
   const destination = _.get(flight, 'destination');
-  const isFlightCaptured = _.get(flight, 'captured');
+  const isFlightCaptured = _.get(flight, 'captured', false);
+  const isFlightFrozen = _.get(flight, 'frozen', false);
+
+  if(isFlightFrozen) {
+    // Frozen flight, discard any new advisory
+    return false;
+  }
 
   if(!isFlightCaptured) {
     // Flight is not captured, update advisory
@@ -124,18 +130,30 @@ export function prepareAdvisory(flight, advisory) {
 
 import {
   isInCaptureArea,
+  isInFreezeArea,
 } from '../geo';
 
 export function shouldFlightBeCaptured(flight) {
   const destination = _.get(flight, 'destination');
-
-  console.log(flight);
 
   if(destination === 'EGLL') {
     const flightLevel = _.get(flight, 'position.vertical.currentFlightLevel');
     const {lat, long} = _.get(flight, 'position.horizontal', {lat: 0, long: 0});
 
     return isInCaptureArea(destination, {lat, long, flightLevel});
+  }
+
+  return false;
+}
+
+export function shouldFlightBeFrozen(flight) {
+  const destination = _.get(flight, 'destination');
+
+  if(destination === 'EGLL') {
+    const flightLevel = _.get(flight, 'position.vertical.currentFlightLevel');
+    const {lat, long} = _.get(flight, 'position.horizontal', {lat: 0, long: 0});
+
+    return isInFreezeArea(destination, {lat, long, flightLevel});
   }
 
   return false;

@@ -12,6 +12,7 @@ import {
 
 import {
   CAPTURE_FLIGHTS,
+  FREEZE_FLIGHTS,
 } from '../actions/positions';
 
 const defaultState = {
@@ -43,17 +44,39 @@ export default function reducer(state = defaultState, action) {
         flights: merge({}, state.flights, action.entities.flights),
       };
     case CAPTURE_FLIGHTS:
+    {
       const {ifplIds} = action;
+
       if(_.isEmpty(ifplIds)) {
         return state;
       }
+
       const flights = _.mapValues(state.flights, (f, ifplId) => {
         if(_.includes(ifplIds, ifplId)) {
           return Object.assign({}, f, {captureTime: Date.now(), captured: true});
         }
         return f;
       });
+
       return Object.assign({}, state, {flights});
+    }
+    case FREEZE_FLIGHTS:
+    {
+      const {ifplIds} = action;
+
+      if(_.isEmpty(ifplIds)) {
+        return state;
+      }
+
+      const flights = _.mapValues(state.flights, (f, ifplId) => {
+        if(_.includes(ifplIds, ifplId)) {
+          return Object.assign({}, f, {freezeTime: Date.now(), frozen: true});
+        }
+        return f;
+      });
+
+      return Object.assign({}, state, {flights});
+    }
   }
 
   return state;
