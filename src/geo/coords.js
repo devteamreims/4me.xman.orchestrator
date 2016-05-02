@@ -13,7 +13,7 @@ function processCoords(coords) {
   const horizontal = _.map(coords.horizontal, c => {
     const lat = sexagesimal(c[0]);
     const long = sexagesimal(c[1]);
-    return [lat, long];
+    return [long, lat];
   });
 
 

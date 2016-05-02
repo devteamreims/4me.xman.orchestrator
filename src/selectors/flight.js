@@ -81,35 +81,30 @@ export const getFlightsInFilterWithData = (state, filter) => _.filter(getFlights
 export const getSortedFlightsInFilterWithData = (state, filter) => _.sortBy(getFlightsInFilterWithData(state, filter), f => f.advisory.targetTime);
 
 import {
-  isInSector,
-  isInVerticalSector,
+  isInSectorArea as checkArea,
+  isInSector as checkAreaAndVertical,
 } from '../geo';
 
 function isInSectorArea(sector, flight) {
   const {lat, long} = _.get(flight, 'position.horizontal', {lat: 0, long: 0});
 
-
-
   if(lat === 0 || long === 0) {
     return false;
   }
 
-  return isInSector(sector, flight.destination, [lat, long]);
+  return checkArea(sector, flight.destination, {lat, long});
 
-  return true;
 }
 
 function isInSectorVerticalArea(sector, flight) {
-  const currentFlightLevel = _.get(flight, 'position.vertical.currentFlightLevel', 0);
-  if(!currentFlightLevel) {
+  const {lat, long} = _.get(flight, 'position.horizontal', {lat: 0, long: 0});
+  const flightLevel = _.get(flight, 'position.vertical.currentFlightLevel', 0);
+
+  if(!flightLevel) {
     return true;
   }
 
   const destination = _.get(flight, 'destination');
 
-  const result = isInVerticalSector(sector, destination, currentFlightLevel);
-
-  debug(`Calling isInVerticalSector with ${sector}, ${destination}, ${currentFlightLevel} : ${result}`);
-
-  return isInVerticalSector(sector, destination, currentFlightLevel);
+  return checkAreaAndVertical(sector, destination, {lat, long, flightLevel});
 }

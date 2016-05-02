@@ -1,11 +1,22 @@
 import turf from 'turf';
 import _ from 'lodash';
+import d from 'debug';
+const debug = d('4me.geo');
 
 import {
-  sectors as sectorCoords
+  sectors as sectorCoords,
 } from './coords';
 
-export function isInSector(sectorName, destinationName, rawCoords) {
+/*
+ * rawCoords format :
+ * {
+ *   lat: XX,
+ *   long: YY,
+ *   flightLevel: ZZ,
+ * }
+ */
+
+export function isInSectorArea(sectorName, destinationName, rawCoords) {
   const sector = _.get(sectorCoords, _.toUpper(sectorName));
 
   if(_.isEmpty(sector)) {
@@ -27,8 +38,14 @@ export function isInSector(sectorName, destinationName, rawCoords) {
   const polygon = turf.polygon([destination.horizontal]);
   let point;
 
+  const {
+    lat,
+    long,
+    flightLevel,
+  } = rawCoords;
+
   try {
-    point = turf.point(rawCoords);
+    point = turf.point([long, lat]);
   } catch(e) {
     console.log('Could not create point from these coords :');
     console.log(rawCoords);
@@ -38,13 +55,8 @@ export function isInSector(sectorName, destinationName, rawCoords) {
   return turf.inside(point, polygon);
 }
 
-export function isInVerticalSector(sectorName, destinationName, flightLevel) {
+export function isInSector(sectorName, destinationName, rawCoords) {
   const sector = _.get(sectorCoords, _.toUpper(sectorName));
-
-  if(_.isEmpty(sector)) {
-    throw new Error(`${sectorName} : Unknown sector`);
-  }
-
   const destination = _.get(sector, _.toUpper(destinationName));
 
   if(_.isEmpty(destination)) {
@@ -59,9 +71,30 @@ export function isInVerticalSector(sectorName, destinationName, flightLevel) {
 
   const {min, max} = destination.vertical;
 
-  flightLevel = parseInt(flightLevel);
+  const flightLevel = parseInt(_.get(rawCoords, 'flightLevel'));
+  return isInSectorArea(sectorName, destinationName, rawCoords) && _.inRange(flightLevel, min, max);
+}
 
-  console.log(`Comparing current FL : ${flightLevel} with min: ${min}, max: ${max}`);
+export function isInCaptureArea(destinationName, rawCoords) {
+  const {
+    lat,
+    long,
+    flightLevel,
+  } = rawCoords;
 
-  return _.inRange(flightLevel, min, max);
+  const captureSectors = ['UF', 'KD', 'XR', 'KN'];
+
+  return _.some(captureSectors, s => isInSectorArea(s, destinationName, rawCoords));
+}
+
+export function isInFreezeArea(destinationName, rawCoords) {
+  const {
+    lat,
+    long,
+    flightLevel,
+  } = rawCoords;
+
+  const freezeSectors = ['KN'];
+
+  return _.some(captureSectors, s => isInSectorArea(s, destinationName, rawCoords));
 }

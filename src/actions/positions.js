@@ -40,6 +40,10 @@ import {
   lifecycleLogger,
 } from '../logger';
 
+import {
+  flightToString,
+} from '../utils/flight';
+
 export const UPDATE_POSITIONS = 'UPDATE_POSITIONS';
 export const CAPTURE_FLIGHTS = 'CAPTURE_FLIGHTS';
 
@@ -128,18 +132,18 @@ export function updatePositions() {
       // Set captured flag
       .then(() => {
         const flights = getFlightsWithData(getState());
-        const capturedIfplIds = _.reduce(flights, (prev, flight) => {
-          if(shouldFlightBeCaptured(flight) && flight.captured === false) {
-            return [...prev, flight.ifplId];
-          }
-          return prev;
-        }, []);
+
+        const capturedFlights = _.filter(flights, flight => {
+          return shouldFlightBeCaptured(flight) && flight.captured === false;
+        });
+
+        const capturedIfplIds = _.map(capturedFlights, flight => flight.ifplId);
 
         if(capturedIfplIds.length) {
           lifecycleLogger(
             'Capturing %d flights : %s',
             capturedIfplIds.length,
-            capturedIfplIds.join(',')
+            _.map(capturedFlights, flightToString).join(',')
           );
           return dispatch(captureFlightsAction(capturedIfplIds));
         } else {

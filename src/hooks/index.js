@@ -80,7 +80,8 @@ function isNightTime(flight, advisory) {
   const nightStart = tto.isDST() ? moment.utc(rawTto).hours(22).startOf('hour') : moment.utc(rawTto).hours(21).startOf('hour');
   const nightEnd = tto.isDST() ? moment.utc(rawTto).hours(6).minutes(30).startOf('minute') : moment.utc(rawTto).hours(5).minutes(30).startOf('minute');
   debug(
-    'Comparing %s with start: %s / end %s : %s',
+    '[%s] Comparing %s with start: %s / end %s : %s',
+    flightToString(flight),
     tto.format(),
     nightStart.format(),
     nightEnd.format(),
@@ -121,6 +122,10 @@ export function prepareAdvisory(flight, advisory) {
   return advisory;
 }
 
+import {
+  isInCaptureArea,
+} from '../geo';
+
 export function shouldFlightBeCaptured(flight) {
   const destination = _.get(flight, 'destination');
 
@@ -128,11 +133,9 @@ export function shouldFlightBeCaptured(flight) {
 
   if(destination === 'EGLL') {
     const flightLevel = _.get(flight, 'position.vertical.currentFlightLevel');
-    if(flightLevel >= 380) {
-      return true;
-    }
-    // Introduce some sort of geo filtering here
-    return false;
+    const {lat, long} = _.get(flight, 'position.horizontal', {lat: 0, long: 0});
+
+    return isInCaptureArea(destination, {lat, long, flightLevel});
   }
 
   return false;
