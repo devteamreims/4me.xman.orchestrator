@@ -75,7 +75,13 @@ export function updatePositions() {
   return (dispatch, getState) => {
     const flights = getFlights(getState());
     const ifplIds = _.keys(flights);
-    debug('Fetching positions for flights with IDs : [%s]', ifplIds.join(','));
+
+    // No need to perform a request since we have no tracked flights
+    if(_.isEmpty(ifplIds)) {
+      return;
+    }
+
+    debug('Fetching positions for flights : %s', _.map(flights, flightToString).join(', '));
 
     const assocArray = _.map(flights, (f, key) => ({arcid: f.arcid, ifplId: key}));
     const callsigns = _.map(assocArray, f => f.arcid);

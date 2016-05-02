@@ -4,7 +4,6 @@ import _ from 'lodash';
 import merge from 'lodash/merge';
 
 import {
-  SET_INITIAL_FLIGHT_LIST,
   ADD_FLIGHTS,
   REMOVE_FLIGHTS,
   UPDATE_FLIGHTS
@@ -23,13 +22,6 @@ const defaultState = {
 
 export default function reducer(state = defaultState, action) {
   switch(action.type) {
-    // In this case, create a brand new state
-    case SET_INITIAL_FLIGHT_LIST:
-      return {
-        lastUpdated: Date.now(),
-        lastFetched: action.lastFetched,
-        flights: merge({}, action.entities.flights),
-      };
     case REMOVE_FLIGHTS:
       return {
         lastUpdated: Date.now(),

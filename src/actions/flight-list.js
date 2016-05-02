@@ -9,7 +9,6 @@ const request = rp;
 
 import {combineAllFlightData} from '../utils/flight';
 
-export const SET_INITIAL_FLIGHT_LIST = 'SET_INITIAL_FLIGHT_LIST';
 export const ADD_FLIGHTS = 'ADD_FLIGHTS';
 export const REMOVE_FLIGHTS = 'REMOVE_FLIGHTS';
 export const UPDATE_FLIGHTS = 'UPDATE_FLIGHTS';
@@ -69,10 +68,7 @@ function prepareRawFlight(flight) {
     'advisory',
   ];
 
-  // This allows a flight without the captured field set to be set to 'false'
-  // Updating flights will already have a captured field present and will override this default
   return {
-    captured: false,
     ..._.pick(flight, rawFields),
   };
 }
@@ -249,15 +245,6 @@ export function updateFlightList(data) {
       normalizedUpdatedFlights,
     };
   }
-}
-
-function setFlightListAction(data) {
-  return {
-    type: SET_INITIAL_FLIGHT_LIST,
-    lastUpdated: Date.now(),
-    lastFetched: data.lastFetched,
-    entities: data.entities
-  };
 }
 
 function addFlightsAction(data) {
