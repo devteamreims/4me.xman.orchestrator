@@ -83,7 +83,7 @@ export const getSortedFlightsInFilterWithData = (state, filter) => _.sortBy(getF
 import {
   isInSector,
   isInVerticalSector,
-} from '../../coords.js';
+} from '../geo';
 
 function isInSectorArea(sector, flight) {
   const {lat, long} = _.get(flight, 'position.horizontal', {lat: 0, long: 0});
