@@ -49,7 +49,7 @@ export default function reducer(state = defaultState, action) {
       }
       const flights = _.mapValues(state.flights, (f, ifplId) => {
         if(_.includes(ifplIds, ifplId)) {
-          return _.defaults({}, {captured: true}, f, {captureTime: Date.now()});
+          return Object.assign({}, f, {captureTime: Date.now(), captured: true});
         }
         return f;
       });
