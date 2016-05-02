@@ -47,7 +47,12 @@ export default function reducer(state = defaultState, action) {
       if(_.isEmpty(ifplIds)) {
         return state;
       }
-      const flights = _.mapValues(state.flights, (f, ifplId) => _.includes(ifplIds, ifplId) ? merge({}, f, {captured: true}) : f);
+      const flights = _.mapValues(state.flights, (f, ifplId) => {
+        if(_.includes(ifplIds, ifplId)) {
+          return _.defaults({}, {captured: true}, f, {captureTime: Date.now()});
+        }
+        return f;
+      });
       return Object.assign({}, state, {flights});
   }
 
