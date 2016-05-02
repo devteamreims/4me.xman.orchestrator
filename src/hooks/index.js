@@ -84,9 +84,9 @@ function isNightTime(flight, advisory) {
     tto.format(),
     nightStart.format(),
     nightEnd.format(),
-    (tto.isBefore(nightStart) || tto.isAfter(nightEnd)) ? 'night mode' : 'day mode'
+    !(tto.isBefore(nightStart) && tto.isAfter(nightEnd)) ? 'night mode' : 'day mode'
   );
-  return tto.isBefore(nightStart) || tto.isAfter(nightEnd);
+  return !(tto.isBefore(nightStart) && tto.isAfter(nightEnd));
 }
 
 export function prepareAdvisory(flight, advisory) {
