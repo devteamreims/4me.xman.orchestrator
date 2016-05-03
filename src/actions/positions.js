@@ -178,6 +178,12 @@ export function updatePositions() {
         });
         const trackedIfplIds = _.map(trackedFlights, toIfplId);
 
+        const ignoredFlights = _.reject(flights, flight =>
+          shouldFlightBeTracked(flight)
+          || shouldFlightBeFrozen(flight)
+          || shouldFlightBeCaptured(flight));
+        const ignoredIfplIds = _.map(ignoredFlights, toIfplId);
+
         if(!_.isEmpty(capturedIfplIds)) {
           _.each(capturedFlights, (f) => lifecycleLogger(
             '[%s] is now captured',
@@ -201,17 +207,6 @@ export function updatePositions() {
           ));
           dispatch(trackFlightsAction(trackedIfplIds));
         }
-
-        const ignoredIfplIds = _(flights)
-          .map(toIfplId)
-          .without(...trackedIfplIds)
-          .without(...frozenIfplIds)
-          .without(...capturedIfplIds)
-          .value();
-
-        const ignoredFlights = _(flights)
-          .filter(f => _.includes(ignoredIfplIds, toIfplId(f)))
-          .value();
 
         if(!_.isEmpty(ignoredIfplIds)) {
           _.each(ignoredFlights, f => lifecycleLogger(
