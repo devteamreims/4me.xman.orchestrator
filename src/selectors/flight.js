@@ -88,7 +88,7 @@ export function isFlightInFilter(filter) {
   }
 }
 
-export const getFlightsInFilterWithData = (state, filter) => _.filter(getFlightsWithData(state), isFlightInFilter(filter));
+export const getFlightsInFilterWithData = (state, filter) => _.filter(getTrackedFlightsWithData(state), isFlightInFilter(filter));
 
 export const getSortedFlightsInFilterWithData = (state, filter) => _.sortBy(getFlightsInFilterWithData(state, filter), f => f.advisory.targetTime);
 
