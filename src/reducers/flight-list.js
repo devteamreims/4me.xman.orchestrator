@@ -12,6 +12,7 @@ import {
 import {
   CAPTURE_FLIGHTS,
   FREEZE_FLIGHTS,
+  TRACK_FLIGHTS,
 } from '../actions/positions';
 
 const defaultState = {
@@ -35,6 +36,9 @@ export default function reducer(state = defaultState, action) {
         lastFetched: action.lastFetched || Date.now(),
         flights: merge({}, state.flights, action.entities.flights),
       };
+    // TODO Refactor this stuff
+    // A captured flight should be tracked automatically
+    // A frozen flight should be captured
     case CAPTURE_FLIGHTS:
     {
       const {ifplIds} = action;
@@ -68,6 +72,24 @@ export default function reducer(state = defaultState, action) {
       });
 
       return Object.assign({}, state, {flights});
+    }
+    case TRACK_FLIGHTS:
+    {
+      const {ifplIds} = action;
+
+      if(_.isEmpty(ifplIds)) {
+        return state;
+      }
+
+      const flights = _.mapValues(state.flights, (f, ifplId) => {
+        if(_.includes(ifplIds, ifplId)) {
+          return Object.assign({}, f, {trackTime: Date.now(), tracked: true});
+        }
+        return f;
+      });
+
+      return Object.assign({}, state, {flights});
+
     }
   }
 

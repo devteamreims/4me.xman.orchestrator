@@ -11,8 +11,16 @@ function processCoords(coords) {
   }
 
   const horizontal = _.map(coords.horizontal, c => {
-    const lat = sexagesimal(c[0]);
-    const long = sexagesimal(c[1]);
+    let [long, lat] = c;
+
+    if(typeof c[0] === "string") {
+      long = sexagesimal(c[0]);
+    }
+
+    if(typeof c[1] === "string") {
+      lat = sexagesimal(c[1]);
+    }
+
     return [long, lat];
   });
 
@@ -26,9 +34,16 @@ const processedSectors = _.mapValues(rawSectors, (val, key) => {
 
 debug('Finished processing geo config');
 debug(processedSectors);
+debug(processedSectors.KN.EGLL.horizontal);
+
 
 export const sectors = processedSectors;
 
-export default {
-  sectors,
-};
+import {
+  areas,
+} from '../../config';
+
+
+export const captureAreas = areas.captureAreas;
+export const freezeAreas = areas.freezeAreas;
+export const trackAreas = areas.trackAreas;

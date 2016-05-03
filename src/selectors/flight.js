@@ -19,7 +19,19 @@ const defaultPosition = {
 export const getFlights = (state) => state.flightList.flights;
 export const getFlightByIfplId = (state, ifplId) => _.get(getFlights(state), ifplId);
 
-export const getFlightsWithData = (state) => _.map(getFlights(state), combineSingleFlight(state));
+export const getFlightsWithData = (state) => {
+  return _(getFlights(state))
+    .map(combineSingleFlight(state))
+    .value();
+};
+
+export const getTrackedFlightsWithData = (state) => {
+  return _(getFlightsWithData(state))
+    .reject(flight => !flight.tracked)
+    .value();
+};
+
+
 export const getFlightByIfplIdWithData = (state, ifplId) => combineSingleFlight(state)(getFlightByIfplId(state, ifplId), ifplId);
 
 function combineSingleFlight(state) {

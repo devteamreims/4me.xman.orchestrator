@@ -35,6 +35,7 @@ import {
 import {
   shouldFlightBeCaptured,
   shouldFlightBeFrozen,
+  shouldFlightBeTracked,
 } from '../hooks';
 
 import {
@@ -48,6 +49,7 @@ import {
 export const UPDATE_POSITIONS = 'UPDATE_POSITIONS';
 export const CAPTURE_FLIGHTS = 'CAPTURE_FLIGHTS';
 export const FREEZE_FLIGHTS = 'FREEZE_FLIGHTS';
+export const TRACK_FLIGHTS = 'TRACK_FLIGHTS';
 
 export function updatePositionsAction(positions) {
   return {
@@ -67,6 +69,13 @@ export function captureFlightsAction(ifplIds) {
 export function freezeFlightsAction(ifplIds) {
   return {
     type: FREEZE_FLIGHTS,
+    ifplIds,
+  };
+}
+
+export function trackFlightsAction(ifplIds) {
+  return {
+    type: TRACK_FLIGHTS,
     ifplIds,
   };
 }
@@ -146,19 +155,28 @@ export function updatePositions() {
       })
       // Set captured and freeze flag
       .then(() => {
+
         const flights = getFlightsWithData(getState());
+
+        const toIfplId = flight => _.get(flight, 'ifplId');
 
         const capturedFlights = _.filter(flights, flight => {
           const isFlightAlreadyCaptured = _.get(flight, 'captured', false);
-          return shouldFlightBeCaptured(flight) && !isFlightAlreadyCaptured;
+          return !isFlightAlreadyCaptured && shouldFlightBeCaptured(flight);
         });
-        const capturedIfplIds = _.map(capturedFlights, flight => flight.ifplId);
+        const capturedIfplIds = _.map(capturedFlights, toIfplId);
 
         const frozenFlights = _.filter(flights, flight => {
           const isFlightAlreadyFrozen = _.get(flight, 'frozen', false);
-          return shouldFlightBeFrozen(flight) && !isFlightAlreadyFrozen;
+          return !isFlightAlreadyFrozen && shouldFlightBeFrozen(flight);
         });
-        const frozenIfplIds = _.map(frozenFlights, flight => flight.ifplId);
+        const frozenIfplIds = _.map(frozenFlights, toIfplId);
+
+        const trackedFlights = _.filter(flights, flight => {
+          const isFlightAlreadyTracked = _.get(flight, 'tracked', false);
+          return !isFlightAlreadyTracked && shouldFlightBeTracked(flight);
+        });
+        const trackedIfplIds = _.map(trackedFlights, toIfplId);
 
         if(!_.isEmpty(capturedIfplIds)) {
           _.each(capturedFlights, (f) => lifecycleLogger(
@@ -174,6 +192,32 @@ export function updatePositions() {
             flightToString(f)
           ));
           dispatch(freezeFlightsAction(frozenIfplIds));
+        }
+
+        if(!_.isEmpty(trackedIfplIds)) {
+          _.each(trackedFlights, f => lifecycleLogger(
+            '[%s] is now tracked',
+            flightToString(f)
+          ));
+          dispatch(trackFlightsAction(trackedIfplIds));
+        }
+
+        const ignoredIfplIds = _(flights)
+          .map(toIfplId)
+          .without(...trackedIfplIds)
+          .without(...frozenIfplIds)
+          .without(...capturedIfplIds)
+          .value();
+
+        const ignoredFlights = _(flights)
+          .filter(f => _.includes(ignoredIfplIds, toIfplId(f)))
+          .value();
+
+        if(!_.isEmpty(ignoredIfplIds)) {
+          _.each(ignoredFlights, f => lifecycleLogger(
+            '[%s] is ignored for now',
+            flightToString(f)
+          ));
         }
 
         return;

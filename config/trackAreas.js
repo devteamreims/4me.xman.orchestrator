@@ -1,5 +1,6 @@
-// Flights in the interest area will be displayed on the CWPs
+// Flights in the track area will be displayed on the CWPs
 // Their advisory won't be displayed though
+// Flights outside will be kept in memory for reference but won't appear anywhere on the CWPs
 
 const EGLL = [
   [2.0306608, 49.1888617],

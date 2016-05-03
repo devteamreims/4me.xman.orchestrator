@@ -5,6 +5,9 @@ const debug = d('4me.geo');
 
 import {
   sectors as sectorCoords,
+  captureAreas,
+  freezeAreas,
+  trackAreas,
 } from './coords';
 
 /*
@@ -36,6 +39,7 @@ export function isInSectorArea(sectorName, destinationName, rawCoords) {
   }
 
   const polygon = turf.polygon([destination.horizontal]);
+
   let point;
 
   const {
@@ -75,6 +79,7 @@ export function isInSector(sectorName, destinationName, rawCoords) {
   return isInSectorArea(sectorName, destinationName, rawCoords) && _.inRange(flightLevel, min, max);
 }
 
+
 export function isInCaptureArea(destinationName, rawCoords) {
   const {
     lat,
@@ -97,4 +102,33 @@ export function isInFreezeArea(destinationName, rawCoords) {
   const freezeSectors = ['KN'];
 
   return _.some(freezeSectors, s => isInSectorArea(s, destinationName, rawCoords));
+}
+
+export function isInTrackArea(destinationName, rawCoords) {
+  const destination = _.get(trackAreas, _.toUpper(destinationName));
+
+  if(_.isEmpty(destination)) {
+    console.log(`isInTrackArea : destination ${destinationName} is unknown`);
+    return false;
+  }
+
+  const polygon = turf.polygon([destination]);
+
+  let point;
+
+  const {
+    lat,
+    long,
+    flightLevel,
+  } = rawCoords;
+
+  try {
+    point = turf.point([long, lat]);
+  } catch(e) {
+    console.log('Could not create point from these coords :');
+    console.log(rawCoords);
+    return false;
+  }
+
+  return turf.inside(point, polygon);
 }

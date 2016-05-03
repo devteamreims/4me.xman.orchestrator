@@ -131,6 +131,7 @@ export function prepareAdvisory(flight, advisory) {
 import {
   isInCaptureArea,
   isInFreezeArea,
+  isInTrackArea,
 } from '../geo';
 
 export function shouldFlightBeCaptured(flight) {
@@ -157,4 +158,18 @@ export function shouldFlightBeFrozen(flight) {
   }
 
   return false;
+}
+
+export function shouldFlightBeTracked(flight) {
+  const destination = _.get(flight, 'destination');
+
+  if(destination === 'EGLL') {
+    const flightLevel = _.get(flight, 'position.vertical.currentFlightLevel');
+    const {lat, long} = _.get(flight, 'position.horizontal', {lat: 0, long: 0});
+
+    return isInTrackArea(destination, {lat, long, flightLevel});
+  }
+
+  return false;
+
 }
