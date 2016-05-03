@@ -1,73 +1,68 @@
-/**
-UE/XE/KE/HE
-
-49°27'11"N , 006°00'25"E
-48°57'00"N , 004°48'00"E
-48°15'00"N , 005°44'00"E
-47°59'00"N , 006°00'00"E
-47°55'00"N , 006°30'00"E
-48°00'00"N , 006°36'00"E
-47°49'56"N , 007°33'24"E
-Frontière franco-allemande
-Frontière franco-luxembourgeoise
-49°27'11"N , 006°00'25"E
-*/
-
-const EGLL = {
-  horizontal: {},
-  vertical: {},
-};
-
-const horizontal = [
-  ['49°27\'11"N', '006°00\'25"E'],
-  ['48°57\'00"N', '004°48\'00"E'],
-  ['48°15\'00"N', '005°44\'00"E'],
-  ['47°59\'00"N', '006°00\'00"E'],
-  ['47°55\'00"N', '006°30\'00"E'],
-  ['48°00\'00"N', '006°36\'00"E'],
-  ['47°49\'56"N', '007°33\'24"E'],
-  ['49°27\'11"N', '006°00\'25"E'],
+const EGLL_HORIZONTAL = [
+  [8.4407684, 47.6437327],
+  [8.8907102, 48.9219646],
+  [7.1344344, 49.1019023],
+  [5.844682100000001, 49.5952839],
+  [4.6317668, 49.083929700000006],
+  [5.892627, 48.5418058],
+  [6.433410800000001, 48.2912122],
+  [8.4407684, 47.6437327],
 ];
 
-const UE = {
-  EGLL,
-  LSZH: {
-    vertical: {
-      min: 225,
-      max: 315,
-    },
-    horizontal,
+const verticals = {
+  UE: {
+    min: 225,
+    max: 315,
   },
+  XE: {
+    min: 315,
+    max: 345,
+  },
+  KE: {
+    min: 345,
+    max: 365,
+  },
+  HE: {
+    min: 365,
+    max: 660,
+  },
+};
+
+const LSZH = {
+  vertical: {},
+  horizontal: {},
+};
+
+const UE = {
+  EGLL: {
+    horizontal: EGLL_HORIZONTAL,
+    vertical: verticals.UE,
+  },
+  LSZH,
 };
 
 const XE = {
-  EGLL,
-  LSZH: {
-    vertical: {
-      min: 315,
-      max: 345,
-    },
+  EGLL: {
+    horizontal: EGLL_HORIZONTAL,
+    vertical: verticals.XE,
   },
+  LSZH,
 };
 
 const KE = {
-  EGLL,
-  LSZH: {
-    vertical: {
-      min: 345,
-      max: 365,
-    },
+  EGLL: {
+    horizontal: EGLL_HORIZONTAL,
+    vertical: verticals.KE,
   },
+  LSZH,
 };
 
 const HE = {
-  EGLL,
-  LSZH: {
-    vertical: {
-      min: 365,
-      max: 660,
-    },
+  EGLL: {
+    horizontal: EGLL_HORIZONTAL,
+    vertical: verticals.HE,
   },
+  LSZH,
 };
 
 export default {

@@ -1,148 +1,87 @@
-/** XR/KR/YR/HR :
-50°29'43"N , 003°36'36"E
-Frontière franco-belge
-Frontière franco-luxembourgeoise
-49°27'11"N , 006°00'25"E
-48°57'00"N , 004°48'00"E
-48°58'33"N , 004°12'53"E
-48°42'00"N , 003°30'00"E
-48°40'00"N , 003°07'00"E
-48°35'00"N , 003°01'00"E
-49°00'00"N , 002°32'30"E
-49°04'34"N , 002°27'17"E
-49°10'00"N , 002°21'05"E
-49°15'56"N , 002°14'29"E
-49°27'00"N , 002°45'00"E
-49°44'21"N , 002°59'00"E
-50°29'43"N , 003°36'36"E
-
-UR : :
-50°29'43"N , 003°36'36"E
-Frontière franco-belge
-50°20'53"N , 003°59'35"E
-49°12'41"N , 003°54'29"E
-49°06'37"N , 003°43'38"E
-48°59'35"N , 003°48'48"E
-48°58'33"N , 004°12'53"E
-48°42'00"N , 003°30'00"E
-48°40'00"N , 003°07'00"E
-48°35'00"N , 003°01'00"E
-49°00'00"N , 002°32'30"E
-49°04'34"N , 002°27'17"E
-49°10'00"N , 002°21'05"E
-49°15'56"N , 002°14'29"E
-49°27'00"N , 002°45'00"E
-49°44'21"N , 002°59'00"E
-50°29'43"N , 003°36'36"E
-
-Source : https://www.sia.aviation-civile.gouv.fr/aip/enligne/FRANCE/AIRAC-2016-03-03/html/eAIP/FR-ENR-3.8-fr-FR.html#ENR-3.8
-
-*/
-
-const egllUR = {
-  vertical: {
+const verticals = {
+  UR: {
     min: 265,
-    max: 315
+    max: 315,
   },
-  horizontal: [
-    ['50°29\'43"N', '003°36\'36"E'],
-    ['50°20\'53"N', '003°59\'35"E'],
-    ['49°12\'41"N', '003°54\'29"E'],
-    ['49°06\'37"N', '003°43\'38"E'],
-    ['48°59\'35"N', '003°48\'48"E'],
-    ['48°58\'33"N', '004°12\'53"E'],
-    ['48°42\'00"N', '003°30\'00"E'],
-    ['48°40\'00"N', '003°07\'00"E'],
-    ['48°35\'00"N', '003°01\'00"E'],
-    ['49°00\'00"N', '002°32\'30"E'],
-    ['49°04\'34"N', '002°27\'17"E'],
-    ['49°10\'00"N', '002°21\'05"E'],
-    ['49°15\'56"N', '002°14\'29"E'],
-    ['49°27\'00"N', '002°45\'00"E'],
-    ['49°44\'21"N', '002°59\'00"E'],
-    ['50°29\'43"N', '003°36\'36"E'],
-  ],
-};
-
-const areaForRest = [
-  ['50°29\'43"N', '003°36\'36"E'],
-  ['49°27\'11"N', '006°00\'25"E'],
-  ['48°57\'00"N', '004°48\'00"E'],
-  ['48°58\'33"N', '004°12\'53"E'],
-  ['48°42\'00"N', '003°30\'00"E'],
-  ['48°40\'00"N', '003°07\'00"E'],
-  ['48°35\'00"N', '003°01\'00"E'],
-  ['49°00\'00"N', '002°32\'30"E'],
-  ['49°04\'34"N', '002°27\'17"E'],
-  ['49°10\'00"N', '002°21\'05"E'],
-  ['49°15\'56"N', '002°14\'29"E'],
-  ['49°27\'00"N', '002°45\'00"E'],
-  ['49°44\'21"N', '002°59\'00"E'],
-  ['50°29\'43"N', '003°36\'36"E'],
-];
-
-
-
-const egllXR = {
-  vertical: {
+  XR: {
     min: 315,
     max: 345,
   },
-  horizontal: areaForRest
-};
-
-const egllKR = {
-  vertical: {
+  KR: {
     min: 345,
     max: 365,
   },
-  horizontal: areaForRest
-};
-
-const egllYR = {
-  vertical: {
+  YR: {
     min: 365,
     max: 375,
   },
-  horizontal: areaForRest
-};
-
-const egllHR = {
-  vertical: {
+  HR: {
     min: 375,
     max: 660,
-  },
-  horizontal: areaForRest
+  }
 };
-
 
 const LSZH = {
   vertical: {},
   horizontal: {},
 };
 
+const EGLL_HORIZONTAL = [
+  [3.5550684000000006, 50.4463304],
+  [2.75, 49.45],
+  [2.1533203, 49.23194730000001],
+  [2.9186111, 48.2833333],
+  [3.8507080000000005, 47.1299508],
+  [6.015014600000001, 47.9605024],
+  [7.064209, 49.1457836],
+  [5.971069299999999, 49.460983899999995],
+  [3.5550684000000006, 50.4463304],
+];
 
+const UR = {
+  EGLL: {
+    vertical: verticals.UR,
+    horizontal: EGLL_HORIZONTAL,
+  },
+  LSZH,
+};
 
+const XR = {
+  EGLL: {
+    vertical: verticals.XR,
+    horizontal: EGLL_HORIZONTAL,
+  },
+  LSZH,
+};
+
+const KR = {
+  EGLL: {
+    vertical: verticals.KR,
+    horizontal: EGLL_HORIZONTAL,
+  },
+  LSZH,
+};
+
+const YR = {
+  EGLL: {
+    vertical: verticals.YR,
+    horizontal: EGLL_HORIZONTAL,
+  },
+  LSZH,
+};
+
+const HR = {
+  EGLL: {
+    vertical: verticals.HR,
+    horizontal: EGLL_HORIZONTAL,
+  },
+  LSZH,
+};
 
 export default {
-  'UR': {
-    EGLL: egllUR,
-    LSZH,
-  },
-  'XR': {
-    EGLL: egllXR,
-    LSZH,
-  },
-  'KR': {
-    EGLL: egllKR,
-    LSZH,
-  },
-  'YR': {
-    EGLL: egllYR,
-    LSZH,
-  },
-  'HR': {
-    EGLL: egllHR,
-    LSZH,
-  },
+  UR,
+  XR,
+  KR,
+  YR,
+  HR,
 };
