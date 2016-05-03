@@ -2,8 +2,9 @@ import _ from 'lodash';
 
 const getRaw = (state) => _.get(state, 'advisories');
 
+// Unused
 export const getMachReductionFromAdvisory = (advisory) => {
-  const delay = _.get(advisory, 'delay', 0);
+  const delay = _.get(advisory, 'delay', 0) + 60*10;
   switch(true) {
     case (delay >= 60*3):
       return 4;
