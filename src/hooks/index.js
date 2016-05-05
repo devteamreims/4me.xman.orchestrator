@@ -50,10 +50,10 @@ export function shouldAddFlight(flight) {
   return false;
 }
 
-export function shouldAdvisoryUpdate(flight, oldAdvisory, newAdvisory) {
-  const destination = _.get(flight, 'destination');
-  const isFlightCaptured = _.get(flight, 'captured', false);
-  const isFlightFrozen = _.get(flight, 'frozen', false);
+export function shouldAdvisoryUpdate(stateFlight, newFlight, oldAdvisory, newAdvisory) {
+  const destination = _.get(newFlight, 'destination');
+  const isFlightCaptured = _.get(stateFlight, 'captured', false);
+  const isFlightFrozen = _.get(stateFlight, 'frozen', false);
 
   if(isFlightFrozen) {
     // Frozen flight, discard any new advisory
@@ -67,11 +67,11 @@ export function shouldAdvisoryUpdate(flight, oldAdvisory, newAdvisory) {
 
   if(destination === 'EGLL') {
     if(oldAdvisory.machReduction < newAdvisory.machReduction) {
-      lifecycleLogger(`New speed advisory for flight ${flightToString(flight)} : ${oldAdvisory.delay}/-${oldAdvisory.machReduction} => ${newAdvisory.delay}/-${newAdvisory.machReduction}`);
+      lifecycleLogger(`New speed advisory for flight ${flightToString(newFlight)} : ${oldAdvisory.delay}/-${oldAdvisory.machReduction} => ${newAdvisory.delay}/-${newAdvisory.machReduction}`);
       return true;
     }
 
-    lifecycleLogger(`Rejecting speed advisory for flight ${flightToString(flight)} : ${oldAdvisory.delay}/-${oldAdvisory.machReduction} => ${newAdvisory.delay}/-${newAdvisory.machReduction}`)
+    lifecycleLogger(`Rejecting speed advisory for flight ${flightToString(newFlight)} : ${oldAdvisory.delay}/-${oldAdvisory.machReduction} => ${newAdvisory.delay}/-${newAdvisory.machReduction}`)
     return false;
   }
 

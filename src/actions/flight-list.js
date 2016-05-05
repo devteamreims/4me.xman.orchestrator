@@ -20,6 +20,10 @@ import {
 } from '../selectors/flight-list';
 
 import {
+  getFlightByIfplId,
+} from '../selectors/flight';
+
+import {
   getAdvisoryByIfplId,
 } from '../selectors/advisory';
 
@@ -215,10 +219,11 @@ export function updateFlightList(data) {
     if(flightsAreUpdated) {
       // Plug in our shouldAdvisoryUpdate hook
       const postHookAdvisories = _.mapValues(normalizedUpdatedFlights.entities.advisories, (newAdv, ifplId) => {
-        const flight = _.get(normalizedUpdatedFlights.entities.flights, ifplId);
+        const stateFlight = getFlightByIfplId(getState(), ifplId);
+        const newFlight = _.get(normalizedUpdatedFlights.entities.flights, ifplId);
         const oldAdv = getAdvisoryByIfplId(getState(), ifplId);
 
-        if(!shouldAdvisoryUpdate(flight, oldAdv, newAdv)) {
+        if(!shouldAdvisoryUpdate(stateFlight, newFlight, oldAdv, newAdv)) {
           return oldAdv;
         }
 
