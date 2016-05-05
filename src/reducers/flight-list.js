@@ -6,7 +6,7 @@ import merge from 'lodash/merge';
 import {
   ADD_FLIGHTS,
   REMOVE_FLIGHTS,
-  UPDATE_FLIGHTS
+  UPDATE_FLIGHTS,
 } from '../actions/flight-list';
 
 import {
