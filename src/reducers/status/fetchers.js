@@ -11,6 +11,8 @@ const defaultFetcher = {
   status: 'normal',
   lastUpdated: Date.now(),
   error: null,
+  forceOff: false,
+  forceMcs: false,
 };
 
 const defaultFetchersState = {
