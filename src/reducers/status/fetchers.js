@@ -5,6 +5,7 @@ const debug = d('4me.reducers.status.fetchers');
 import {
   ESCALATE_FETCHER,
   RECOVER_FETCHER,
+  SET_FETCHER_STATUS,
 } from '../../actions/status';
 
 const defaultFetcher = {
@@ -23,6 +24,7 @@ export default function fetchers(state = defaultFetchersState, action) {
   switch(action.type) {
     case ESCALATE_FETCHER:
     case RECOVER_FETCHER:
+    case SET_FETCHER_STATUS:
       const {fetcher} = action;
       if(!fetcher || !_.has(state, fetcher)) {
         debug(`${fetcher} is not a valid fetcher !`);
@@ -30,8 +32,6 @@ export default function fetchers(state = defaultFetchersState, action) {
       }
       const newState = {};
       newState[fetcher] = singleFetcherReducer(state[fetcher], action);
-
-      debug(newState);
       return Object.assign({}, state, newState);
   }
 
@@ -48,7 +48,13 @@ function singleFetcherReducer(state, action) {
         error,
       });
     case RECOVER_FETCHER:
-      return _.cloneDeep(defaultFetcher);
+      return Object.assign({}, _.pick(state, ['forceOff', 'forceMcs']), _.cloneDeep(defaultFetcher));
+    case SET_FETCHER_STATUS:
+      const status = _.get(action, 'status', {});
+      return Object.assign({}, state, {
+        lastUpdated: Date.now(),
+        ...status,
+      });
   }
 
   return state;

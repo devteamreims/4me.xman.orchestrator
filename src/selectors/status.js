@@ -11,13 +11,13 @@ import {createSelector} from 'reselect';
 export const getRaw = (state) => _.get(state, 'status');
 
 
-const getPositions = state => _.get(getRaw(state), 'positions');
-const getFetchers = state => _.get(getRaw(state), 'fetchers');
+export const getPositions = state => _.get(getRaw(state), 'positions');
+export const getFetchers = state => _.get(getRaw(state), 'fetchers');
 
 
 export const getPositionsStatus = state => _.get(getPositions(state), 'status');
 
-const getSingleFetcher = (state, fetcher) => {
+export const getSingleFetcher = (state, fetcher) => {
   if(!_.hasIn(getConfigFetchers(), fetcher)) {
     throw new Error(`${fetcher} is not a known fetcher !`);
   }

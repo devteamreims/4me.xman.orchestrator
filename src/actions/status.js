@@ -6,6 +6,8 @@ export const ESCALATE_POS = 'status/ESCALATE_POS';
 export const RECOVER_FETCHER = 'status/RECOVER_FETCHER';
 export const RECOVER_POS = 'status/RECOVER_POS';
 
+export const SET_FETCHER_STATUS = 'status/SET_FETCHER_STATUS';
+
 import {
   getPrettyStatus,
 } from '../selectors/status';
@@ -27,6 +29,17 @@ export function escalatePositions(error) {
     dispatch({
       type: ESCALATE_POS,
       error,
+    });
+  }
+}
+
+export function setFetcherStatus(fetcher, status) {
+  return (dispatch, getState) => {
+    // TODO : Some check if fetcher exists
+    dispatch({
+      type: SET_FETCHER_STATUS,
+      fetcher,
+      status,
     });
   }
 }

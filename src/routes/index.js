@@ -8,6 +8,10 @@ export default function getRoutes(store) {
   let router = express.Router();
 
   router.use('/flights', getFlightsRouter(store));
+
+  // Provide fall back with old API
+  router.use('/xman', getFlightsRouter(store));
+
   router.use('/status', getStatusRouter(store));
 
   router.get('/getState', getStateController(store));
