@@ -38,8 +38,8 @@ export const getFetchersStatus = (state, fetcher) => {
 
   const fetcherStatuses = _.map(knownFetchers, f => getFetchersStatus(state, f));
 
-  if(_.some(fetcherStatuses, s => s === 'error')) {
-    return 'error';
+  if(_.some(fetcherStatuses, s => s === 'critical')) {
+    return 'critical';
   }
 
   return 'normal';
@@ -54,7 +54,7 @@ export const getPrettyStatus = createSelector(
   isEverythingOk,
   (positions, fetchers, globalOK) => {
     return {
-      status: globalOK ? 'normal' : 'error',
+      status: globalOK ? 'normal' : 'critical',
       items: {
         positions,
         fetchers,

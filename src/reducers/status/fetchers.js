@@ -43,7 +43,7 @@ function singleFetcherReducer(state, action) {
     case ESCALATE_FETCHER:
       const {error} = action;
       return Object.assign({}, state, {
-        status: 'error',
+        status: 'critical',
         lastUpdated: Date.now(),
         error,
       });

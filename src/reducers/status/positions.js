@@ -8,7 +8,7 @@ import {
 } from '../../actions/status';
 
 const defaultState = {
-  status: 'error',
+  status: 'critical',
   lastUpdated: Date.now(),
   error: null,
 };
@@ -18,7 +18,7 @@ export default function positions(state = defaultState, action) {
     case ESCALATE_POS:
       const {error} = action;
       return Object.assign({}, state, {
-        status: 'error',
+        status: 'critical',
         lastUpdated: Date.now(),
         error,
       });
