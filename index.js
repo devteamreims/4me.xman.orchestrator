@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 import bodyParser   from 'body-parser';
 import io from 'socket.io';
 import ioCookieParser from 'socket.io-cookie-parser';
-import routes from './src/routes';
+import getRoutes from './src/routes';
 
 import makeStore from './src/store';
 
@@ -27,7 +27,7 @@ app.io.use(ioCookieParser());
 let store = makeStore(app.io);
 
 // Pass down the store object
-app.use('/', routes(store));
+app.use('/', getRoutes(store));
 
 app.use((req, res, next) => {
   let err = new Error('Not Found');

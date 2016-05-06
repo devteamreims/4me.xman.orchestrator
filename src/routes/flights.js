@@ -1,12 +1,12 @@
 import d from 'debug';
-const debug = d('4me.xman.controller');
+const debug = d('4me.xman.flights.controller');
 import express from 'express';
 import _ from 'lodash';
 
 import {
   getFlightsInFilterWithData,
-  getSortedFlightsInFilterWithData
-} from './selectors/flight';
+  getSortedFlightsInFilterWithData,
+} from '../selectors/flight';
 
 let store;
 
@@ -34,22 +34,14 @@ function getFlights(req, res, next) {
 
 
 
-function getXmanController() {
-  return {
-    getFlights: getFlights
-  };
-}
-
-export function getXmanRouter(reduxStore) {
+export function getFlightsRouter(reduxStore) {
   let router = express.Router();
 
   if(store === undefined) {
     store = reduxStore;
   }
 
-  let xmanController = getXmanController();
-
-  router.get('/', xmanController.getFlights);
+  router.get('/', getFlights);
 
   return router;
 };
