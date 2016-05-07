@@ -31,20 +31,43 @@ export const getTrackedFlightsWithData = (state) => {
     .value();
 };
 
+import {
+  isForcedMcs,
+  isForcedOff,
+} from './fetchers';
 
 export const getFlightByIfplIdWithData = (state, ifplId) => combineSingleFlight(state)(getFlightByIfplId(state, ifplId), ifplId);
+
+function prepareAdvisory(state, flight, advisory) {
+  if(_.isEmpty(advisory)) {
+    return advisory || {};
+  }
+
+  const destination = _.toUpper(_.get(flight, 'destination'));
+
+  if(isForcedMcs(state, destination)) {
+    return Object.assign({}, advisory, {minimumCleanSpeed: true});
+  }
+
+  if(!flight.captured || isForcedOff(state, destination)) {
+    if('machReduction' in advisory) {
+      return Object.assign({}, advisory, {machReduction: 0});
+    } else if('speed' in advisory) {
+      return Object.assign({}, advisory, {speed: 0});
+    }
+  }
+
+  return advisory;
+}
+
+import {
+  getAdvisoryByIfplId,
+} from './advisory';
 
 function combineSingleFlight(state) {
   return (flight, ifplId) => {
     // If the flight is not captured yet, override the advisory
-    let advisory;
-    if(!flight.captured) {
-      advisory = Object.assign({}, state.advisories[ifplId], {
-        machReduction: 0,
-      });
-    } else {
-      advisory = state.advisories[ifplId] || {};
-    }
+    const advisory = prepareAdvisory(getAdvisoryByIfplId(state, ifplId));
 
     return Object.assign({}, flight, {
       ifplId,

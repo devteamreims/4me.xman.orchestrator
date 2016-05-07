@@ -3,8 +3,6 @@ const debug = d('4me.positions.actions');
 import _ from 'lodash';
 import merge from 'lodash/merge';
 
-import {stubPositionData} from '../stubData';
-
 import rp from 'request-promise';
 
 const request = rp;
@@ -85,12 +83,12 @@ export function updatePositions() {
     const flights = getFlights(getState());
     const ifplIds = _.keys(flights);
 
+    debug('Fetching positions for flights : %s', _.map(flights, flightToString).join(', '));
+
     // No need to perform a request since we have no tracked flights
     if(_.isEmpty(ifplIds)) {
-      return;
+      return dispatch(recoverPositions());
     }
-
-    debug('Fetching positions for flights : %s', _.map(flights, flightToString).join(', '));
 
     const assocArray = _.map(flights, (f, key) => ({arcid: f.arcid, ifplId: key}));
     const callsigns = _.map(assocArray, f => f.arcid);

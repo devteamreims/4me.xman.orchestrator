@@ -211,7 +211,6 @@ export function updateFlightList(data) {
     const flightsAreRemoved = !_.isEmpty(removedIfplIds);
 
     debug('IDs :');
-    debug(normalizedAddedFlights);
     debug('Added: %s', _.map(normalizedAddedFlights.entities.flights, flightToString).join(','));
     debug('Updated: %s', _.map(normalizedUpdatedFlights.entities.flights, flightToString).join(','));
     debug('Removed: %s', _.map(removedIfplIds, id => flightToString(getFlightByIfplId(getState(), id))).join(','));
