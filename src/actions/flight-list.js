@@ -42,6 +42,10 @@ import {
   recoverFetcher,
 } from './status';
 
+import {
+  flightToString,
+} from '../utils/flight';
+
 export function updateFlights() {
   return (dispatch, getState) => {
     const url = process.env.EGLL_PARSER_URL;
@@ -191,10 +195,6 @@ export function updateFlightList(data) {
       commonIfplIds.length
     );
 
-    debug('IDs :');
-    debug('Added: %s', addedIfplIds.join(','));
-    debug('Updated: %s', updatedIfplIds.join(','));
-    debug('Removed: %s', removedIfplIds.join(','));
 
 
     const isFlightAdded = (f) => _.includes(addedIfplIds, toIfplId(f));
@@ -210,6 +210,11 @@ export function updateFlightList(data) {
     const flightsAreUpdated = !_.isEmpty(updatedIfplIds);
     const flightsAreRemoved = !_.isEmpty(removedIfplIds);
 
+    debug('IDs :');
+    debug(normalizedAddedFlights);
+    debug('Added: %s', _.map(normalizedAddedFlights.entities.flights, flightToString).join(','));
+    debug('Updated: %s', _.map(normalizedUpdatedFlights.entities.flights, flightToString).join(','));
+    debug('Removed: %s', _.map(removedIfplIds, id => flightToString(getFlightByIfplId(getState(), id))).join(','));
 
     if(flightsAreAdded) {
       // Update our internal tree
