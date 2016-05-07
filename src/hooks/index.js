@@ -33,11 +33,13 @@ export function shouldAddFlight(flight) {
       return false;
     }
 
+    // TODO : Clarify delay="NIL" in XML with London
+    /*
     if(delay === -1) {
       lifecycleLogger(`Reject flight ${flightToString(flight)} : Total delay is -1, flight hasn't been captured by AMAN yet`);
       return false;
     }
-
+    */
 
     if(etoCop.isAfter(timeCutOff)) {
       lifecycleLogger(`Reject flight ${flightToString(flight)} : TTO is ${etoCop}, cutoff is ${timeCutOff}`);
