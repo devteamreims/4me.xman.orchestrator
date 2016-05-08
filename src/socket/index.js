@@ -55,7 +55,6 @@ export function sendFlightListUpdate(mainSocket, clientId, flights) {
 }
 
 export function broadcastFlightUpdate(mainSocket, flight) {
-  debug(flight);
   mainSocket.emit('update_flight', flight);
 }
 

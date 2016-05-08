@@ -68,12 +68,11 @@ export function shouldAdvisoryUpdate(stateFlight, newFlight, oldAdvisory, newAdv
   }
 
   if(destination === 'EGLL') {
-    if(oldAdvisory.machReduction < newAdvisory.machReduction) {
-      lifecycleLogger(`New speed advisory for flight ${flightToString(newFlight)} : ${oldAdvisory.delay}/-${oldAdvisory.machReduction} => ${newAdvisory.delay}/-${newAdvisory.machReduction}`);
+    if(oldAdvisory.machReduction <= newAdvisory.machReduction) {
       return true;
     }
 
-    lifecycleLogger(`Rejecting speed advisory for flight ${flightToString(newFlight)} : ${oldAdvisory.delay}/-${oldAdvisory.machReduction} => ${newAdvisory.delay}/-${newAdvisory.machReduction}`)
+    lifecycleLogger(`[${flightToString(newFlight)}] Rejecting advisory ${oldAdvisory.delay}/-${oldAdvisory.machReduction} => ${newAdvisory.delay}/-${newAdvisory.machReduction}`)
     return false;
   }
 
@@ -87,14 +86,16 @@ function isNightTime(flight, advisory) {
 
   const nightStart = tto.isDST() ? moment.utc(rawTto).hours(22).startOf('hour') : moment.utc(rawTto).hours(21).startOf('hour');
   const nightEnd = tto.isDST() ? moment.utc(rawTto).hours(6).minutes(30).startOf('minute') : moment.utc(rawTto).hours(5).minutes(30).startOf('minute');
-  debug(
-    '[%s] Comparing %s with start: %s / end %s : %s',
-    flightToString(flight),
-    tto.format(),
-    nightStart.format(),
-    nightEnd.format(),
-    !(tto.isBefore(nightStart) && tto.isAfter(nightEnd)) ? 'night mode' : 'day mode'
-  );
+
+  const isNight = !(tto.isBefore(nightStart) && tto.isAfter(nightEnd));
+  if(isNight) {
+    debug(
+      '[%s] TTO is %s : Night mode',
+      flightToString(flight),
+      tto.format()
+    );
+  }
+
   return !(tto.isBefore(nightStart) && tto.isAfter(nightEnd));
 }
 

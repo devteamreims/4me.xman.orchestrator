@@ -66,7 +66,5 @@ function reduceSubscriptionFilter(state, action) {
     ]
   });
 
-  debug(newState);
-
   return newState;
 }

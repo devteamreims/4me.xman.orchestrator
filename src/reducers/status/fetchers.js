@@ -26,14 +26,15 @@ export default function fetchers(state = defaultFetchersState, action) {
     case RECOVER_FETCHER:
     case SET_FETCHER_STATUS:
       const {fetcher} = action;
+
       if(!fetcher || !_.has(state, fetcher)) {
         debug(`${fetcher} is not a valid fetcher !`);
         return state; // This should never happen
       }
+
       const newState = {};
       newState[fetcher] = singleFetcherReducer(state[fetcher], action);
-      debug(action);
-      debug(newState[fetcher]);
+
       return Object.assign({}, state, newState);
   }
 

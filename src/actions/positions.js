@@ -147,8 +147,6 @@ export function updatePositions() {
       .then(normalizePositionData(assocArray))
       // Update positions
       .then(data => {
-        debug('Normalized data :');
-        debug(data);
         return dispatch(updatePositionsAction(data.flights));
       })
       // Set captured and freeze flag
@@ -246,8 +244,10 @@ export function sendNotifications(getState) {
 
     const subscribedFlights = getSortedFlightsInFilterWithData(getState(), {sectors, verticalFilter});
 
-    debug(`Notifying client with ID : ${client.id}`);
-    debug(subscribedFlights);
+    debug(
+      `Client ID : ${client.id} : %s`,
+      _.map(subscribedFlights, flightToString).join(',')
+    );
 
     sendFlightListUpdate(socket, client.id, subscribedFlights);
   });
