@@ -32,6 +32,8 @@ export default function fetchers(state = defaultFetchersState, action) {
       }
       const newState = {};
       newState[fetcher] = singleFetcherReducer(state[fetcher], action);
+      debug(action);
+      debug(newState[fetcher]);
       return Object.assign({}, state, newState);
   }
 
@@ -48,7 +50,7 @@ function singleFetcherReducer(state, action) {
         error,
       });
     case RECOVER_FETCHER:
-      return Object.assign({}, _.pick(state, ['forceOff', 'forceMcs']), _.cloneDeep(defaultFetcher));
+      return Object.assign({}, _.cloneDeep(defaultFetcher), _.pick(state, ['forceOff', 'forceMcs']));
     case SET_FETCHER_STATUS:
       const status = _.get(action, 'status', {});
       return Object.assign({}, state, {

@@ -2,7 +2,9 @@ import _ from 'lodash';
 import d from 'debug';
 const debug = d('4me.selectors.flight');
 
-
+import {
+  flightToString,
+} from '../utils/flight';
 
 const defaultPosition = {
   when: Date.now(),
@@ -67,7 +69,7 @@ import {
 function combineSingleFlight(state) {
   return (flight, ifplId) => {
     // If the flight is not captured yet, override the advisory
-    const advisory = prepareAdvisory(getAdvisoryByIfplId(state, ifplId));
+    const advisory = prepareAdvisory(state, flight, getAdvisoryByIfplId(state, ifplId));
 
     return Object.assign({}, flight, {
       ifplId,
