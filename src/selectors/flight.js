@@ -84,9 +84,6 @@ function combineSingleFlight(state) {
 // Position filters
 
 export function isFlightInFilter(filter) {
-  //debug('Creating filter with these inputs :');
-  //debug(filter);
-
   return (flight) => {
     const sectors = _.get(filter, 'sectors');
     if(_.isEmpty(sectors)) {
@@ -96,18 +93,8 @@ export function isFlightInFilter(filter) {
 
     const verticalFilter = _.get(filter, 'verticalFilter', false);
 
-    debug(`Checking if ${flight.ifplId} is in ${sectors.join(',')}`);
-    debug(`${flight.destination}`);
-
     const inArea = _.some(sectors, (sector) => isInSectorArea(sector, flight));
-
-    debug(`Checking if ${flight.ifplId} is in ${sectors.join(',')} vertical limits`);
-    debug(flight);
-
     const inVerticalLimits = !verticalFilter || _.some(sectors, (sector) => isInSectorVerticalArea(sector, flight));
-
-
-    //debug(`Flight ${flight.ifplId} : inArea : %s, inVerticalLimits : %s`, inArea, inVerticalLimits);
 
     return inArea && inVerticalLimits;
   }
