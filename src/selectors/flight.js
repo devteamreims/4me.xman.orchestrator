@@ -47,7 +47,7 @@ function prepareAdvisory(state, flight, advisory) {
 
   const destination = _.toUpper(_.get(flight, 'destination'));
 
-  if(isForcedMcs(state, destination)) {
+  if(isForcedMcs(state, destination) && !isForcedOff(state, destination)) {
     return Object.assign({}, advisory, {minimumCleanSpeed: true});
   }
 
