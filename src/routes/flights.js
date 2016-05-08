@@ -4,7 +4,6 @@ import express from 'express';
 import _ from 'lodash';
 
 import {
-  getFlightsInFilterWithData,
   getSortedFlightsInFilterWithData,
 } from '../selectors/flight';
 
