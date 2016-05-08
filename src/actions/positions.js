@@ -231,7 +231,7 @@ export function updatePositions() {
 // Some kind of diff mechanism
 // Given state before position update and state after position update, send notifications to socket subscribers
 
-function sendNotifications(getState) {
+export function sendNotifications(getState) {
   const debug = d('4me.positions.actions.notifier');
 
   const newState = getState();
