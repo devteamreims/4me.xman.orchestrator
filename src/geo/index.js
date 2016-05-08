@@ -146,15 +146,19 @@ export function isInTrackArea(destinationName, rawCoords) {
     return false;
   }
 
-  const polygon = turf.polygon([destination]);
-
-  let point;
-
   const {
     lat,
     long,
     flightLevel,
   } = rawCoords;
+
+  if(flightLevel == 0) {
+    return false;
+  }
+
+  const polygon = turf.polygon([destination]);
+
+  let point;
 
   try {
     point = turf.point([long, lat]);
