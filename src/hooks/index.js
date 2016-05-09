@@ -113,13 +113,13 @@ export function prepareAdvisory(flight, advisory) {
       }
 
       switch(true) {
-        case (delay >= 60*3):
+        case (delay >= 120):
           return 4;
-        case (delay > 60*2):
+        case (delay >= 60):
           return 3;
-        case (delay > 60*1):
+        case (delay >= 30):
           return 2;
-        case (delay > 30):
+        case (delay > 0):
           return 1;
         default:
           return 0;
