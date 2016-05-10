@@ -19,7 +19,7 @@ export function setupSocketIo(dispatch, socketIo) {
 
   socketIo.on('connect', function(socket) {
     debug('client connected');
-    dispatch(clientConnected(socket.id));
+    dispatch(clientConnected(socket.id, socket.request.connection.remoteAddress));
     attachHandlerToSocket(dispatch, socket);
   });
 
