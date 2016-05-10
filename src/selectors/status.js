@@ -48,16 +48,22 @@ export const getFetchersStatus = (state, fetcher) => {
 
 export const isEverythingOk = (state) => getFetchersStatus(state) === 'normal' && getPositionsStatus(state) === 'normal';
 
+import {
+  getClients,
+} from './socket-clients';
+
 export const getPrettyStatus = createSelector(
   getPositions,
   getFetchers,
   isEverythingOk,
-  (positions, fetchers, globalOK) => {
+  getClients,
+  (positions, fetchers, globalOK, socketClients) => {
     return {
       status: globalOK ? 'normal' : 'critical',
       items: {
         positions,
         fetchers,
+        socketClients,
       },
     };
   });
