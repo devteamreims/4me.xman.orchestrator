@@ -26,7 +26,8 @@ export default function reducer(state = defaultState, action) {
           {
             id: action.clientId,
             sectors: [],
-            verticalFilter: false
+            verticalFilter: false,
+            ipAddress: _.get(action, 'ipAddress') || null,
           },
           ...state.clients
         ]

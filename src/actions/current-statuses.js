@@ -3,6 +3,7 @@ const debug = d('4me.actions.currentStatuses');
 
 import _ from 'lodash';
 import merge from 'lodash/merge';
+import moment from 'moment';
 
 import {
   getSocket,
@@ -15,6 +16,7 @@ import {
 
 export const SET_CURRENT_STATUS = 'SET_CURRENT_STATUS';
 export const SET_CURRENT_STATUSES = 'SET_CURRENT_STATUSES';
+export const PRUNE_OLD_STATUSES = 'PRUNE_OLD_STATUSES';
 
 function setCurrentStatusAction(ifplId, status) {
   return {
@@ -28,6 +30,19 @@ function setCurrentStatuses(data) {
   return {
     type: SET_CURRENT_STATUSES,
     data: data
+  };
+}
+
+// Time in ms
+// 12 hours
+const MAX_AGE = 60*60*12*1000;
+export function pruneOldStatuses(maxAge = MAX_AGE) {
+  return (dispatch, getState) => {
+    debug('Pruning actions older than %s', moment(Date.now() - maxAge).fromNow(true));
+    return dispatch({
+      type: PRUNE_OLD_STATUSES,
+      maxAge,
+    });
   };
 }
 
@@ -50,8 +65,6 @@ export function commitCurrentStatus(ifplId, status) {
 
     // Save to db
     const dbSave = () => saveToDb(getState().currentStatuses);
-
-
 
     // Dispatch action
     const dispatchAction = () => Promise.resolve(dispatch(setCurrentStatusAction(ifplId, status)));

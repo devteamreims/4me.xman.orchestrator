@@ -17,7 +17,10 @@ import {
   updateFlights,
 } from './actions/flight-list';
 
-import {commitCurrentStatus} from './actions/current-statuses';
+import {
+  commitCurrentStatus,
+  pruneOldStatuses,
+} from './actions/current-statuses';
 
 import {getSocket} from './socket';
 
@@ -38,9 +41,11 @@ export default function makeStore(socketIo) {
 
   const periodicFlightUpdate = () => store.dispatch(updateFlights());
   const periodicPositionUpdate = () => store.dispatch(updatePositions());
+  const periodicStatusPrune = () => store.dispatch(pruneOldStatuses());
 
   setInterval(periodicFlightUpdate, 1000*60);
-  setInterval(periodicPositionUpdate, 1000*30);
+  setInterval(periodicPositionUpdate, 1000*20);
+  setInterval(periodicStatusPrune, 1000*60*30);
 
   setTimeout(() => {
     periodicFlightUpdate()
