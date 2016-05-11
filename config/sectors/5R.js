@@ -11,12 +11,8 @@ const verticals = {
     min: 345,
     max: 365,
   },
-  YR: {
+  HYR: {
     min: 365,
-    max: 375,
-  },
-  HR: {
-    min: 375,
     max: 660,
   }
 };
@@ -62,17 +58,9 @@ const KR = {
   LSZH,
 };
 
-const YR = {
+const HYR = {
   EGLL: {
-    vertical: verticals.YR,
-    horizontal: EGLL_HORIZONTAL,
-  },
-  LSZH,
-};
-
-const HR = {
-  EGLL: {
-    vertical: verticals.HR,
+    vertical: verticals.HYR,
     horizontal: EGLL_HORIZONTAL,
   },
   LSZH,
@@ -82,6 +70,5 @@ export default {
   UR,
   XR,
   KR,
-  YR,
-  HR,
+  HYR,
 };
