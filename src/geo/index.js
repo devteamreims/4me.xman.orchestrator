@@ -23,7 +23,8 @@ export function isInSectorArea(sectorName, destinationName, rawCoords) {
   const sector = _.get(sectorCoords, _.toUpper(sectorName));
 
   if(_.isEmpty(sector)) {
-    throw new Error(`${sectorName} : Unknown sector`);
+    debug(`Sector ${sectorName} is not defined for ${destinationName}`);
+    return false;
   }
 
   const destination = _.get(sector, _.toUpper(destinationName));
