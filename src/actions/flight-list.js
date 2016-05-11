@@ -61,7 +61,7 @@ export function updateFlights() {
       // Parser is down
       .catch(err => {
         debug(err);
-        return dispatch(escalateFetcher('EGLL', 'Something went wrong fetching EGLL flights'));
+        return dispatch(escalateFetcher('EGLL', _.get(err, 'message', 'Something went wrong fetching EGLL flights')));
       });
   };
 }

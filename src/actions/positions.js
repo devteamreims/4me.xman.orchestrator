@@ -221,7 +221,7 @@ export function updatePositions() {
         debug('Failed to fetch positions !');
         debug(err);
 
-        return dispatch(escalatePositions('Something went wrong fetching flight positions'));
+        return dispatch(escalatePositions(_.get(err, 'message', 'Something went wrong fetching flight positions')));
       });
   }
 }
