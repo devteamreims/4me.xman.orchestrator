@@ -140,7 +140,7 @@ export function updateFlightList(data) {
     const trackedFlightCount = _.size(getFlights(getState()));
     const updatedFlightCount = _.size(data.flights);
 
-    lifecycleLogger('Backend was updated %s', moment(data.lastFetched).fromNow());
+    lifecycleLogger('Data timestamp : %s / %s', moment.utc(data.messageTime), moment(data.messageTime).fromNow());
     lifecycleLogger(
       'Currently tracking %d flights, got %d flights from backend',
       trackedFlightCount,
