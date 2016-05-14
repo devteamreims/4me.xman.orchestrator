@@ -26,6 +26,7 @@ export default function positions(state = defaultState, action) {
       return Object.assign({}, state, {
         status: 'normal',
         lastUpdated: Date.now(),
+        error: null,
       });
   }
 
