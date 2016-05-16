@@ -44,9 +44,12 @@ export default function fetchers(state = defaultFetchersState, action) {
 function singleFetcherReducer(state, action) {
   switch(action.type) {
     case ESCALATE_FETCHER:
-      const {error} = action;
+      const {
+        error,
+        level = 'critical',
+      } = action;
       return Object.assign({}, state, {
-        status: 'critical',
+        status: level,
         lastUpdated: Date.now(),
         error,
       });

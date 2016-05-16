@@ -10,13 +10,14 @@ export const RECOVER_POS = 'status/RECOVER_POS';
 export const SET_FETCHER_STATUS = 'status/SET_FETCHER_STATUS';
 
 
-export function escalateFetcher(fetcher, error) {
+export function escalateFetcher(fetcher, error, level = 'error') {
   return (dispatch, getState) => {
     // Dispatch action
     dispatch({
       type: ESCALATE_FETCHER,
       fetcher,
       error,
+      level,
     });
   }
 }

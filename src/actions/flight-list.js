@@ -46,6 +46,8 @@ import {
   flightToString,
 } from '../utils/flight';
 
+const MAX_DATA_AGE = 120;
+
 export function updateFlights() {
   return (dispatch, getState) => {
     const url = process.env.EGLL_PARSER_URL;
@@ -53,15 +55,30 @@ export function updateFlights() {
     return request(url)
       .then(rawData => JSON.parse(rawData))
       .then(rawData => {
-        debug('Got data from backend');
+        const messageTime = moment.utc(_.get(rawData, 'messageTime'));
+        const dataAge = moment.utc().diff(messageTime, 'seconds');
 
+        lifecycleLogger('Data timestamp : %s / %s', messageTime, messageTime.fromNow());
+        lifecycleLogger('Data is %d seconds old', dataAge);
+
+        if(dataAge > MAX_DATA_AGE) {
+          lifecycleLogger('Stale data !');
+          return Promise.reject({
+            level: 'warning',
+            message: `Stale EGLL data : ${dataAge} seconds old`,
+          });
+        }
+        return rawData;
+      })
+      .then(rawData => {
         dispatch(recoverFetcher('EGLL'));
         return dispatch(updateFlightList(rawData));
       })
-      // Parser is down
+      // Handle errors
       .catch(err => {
-        debug(err);
-        return dispatch(escalateFetcher('EGLL', _.get(err, 'message', 'Something went wrong fetching EGLL flights')));
+        const message = _.get(err, 'message', 'Something went wrong fetching EGLL data');
+        const level = _.get(err, 'level', 'critical');
+        return dispatch(escalateFetcher('EGLL', message, level));
       });
   };
 }
@@ -140,7 +157,6 @@ export function updateFlightList(data) {
     const trackedFlightCount = _.size(getFlights(getState()));
     const updatedFlightCount = _.size(data.flights);
 
-    lifecycleLogger('Data timestamp : %s / %s', moment.utc(data.messageTime), moment(data.messageTime).fromNow());
     lifecycleLogger(
       'Currently tracking %d flights, got %d flights from backend',
       trackedFlightCount,
