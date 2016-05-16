@@ -46,7 +46,7 @@ import {
   flightToString,
 } from '../utils/flight';
 
-const MAX_DATA_AGE = 120;
+const MAX_DATA_AGE = 600;
 
 export function updateFlights() {
   return (dispatch, getState) => {
