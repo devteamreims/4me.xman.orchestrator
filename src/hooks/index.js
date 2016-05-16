@@ -84,8 +84,11 @@ function isNightTime(flight, advisory) {
   const rawTto = _.get(advisory, 'targetTime');
   const tto = moment.utc(rawTto);
 
-  const nightStart = tto.isDST() ? moment.utc(rawTto).hours(22).startOf('hour') : moment.utc(rawTto).hours(21).startOf('hour');
-  const nightEnd = tto.isDST() ? moment.utc(rawTto).hours(6).minutes(30).startOf('minute') : moment.utc(rawTto).hours(5).minutes(30).startOf('minute');
+  // isDST returns true in summer
+  // Night in winter : 0630Z to 2100Z
+  // Night in summer : 0530Z to 2000Z
+  const nightStart = tto.isDST() ? moment.utc(rawTto).hours(20).startOf('hour') : moment.utc(rawTto).hours(21).startOf('hour');
+  const nightEnd = tto.isDST() ? moment.utc(rawTto).hours(5).minutes(30).startOf('minute') : moment.utc(rawTto).hours(6).minutes(30).startOf('minute');
 
   const isNight = !(tto.isBefore(nightStart) && tto.isAfter(nightEnd));
   if(isNight) {
