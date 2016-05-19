@@ -243,6 +243,11 @@ export function updateFlightList(data) {
       // Plug in our shouldAdvisoryUpdate hook
       let ifplIdsToLog = [];
       const postHookAdvisories = _.mapValues(normalizedUpdatedFlights.entities.advisories, (newAdv, ifplId) => {
+        // Catch -1 delay here
+        const newDelay = _.get(newAdv, 'delay');
+        if(newDelay === -1) {
+          logFlight(getState, ifplId, {minusOneDelay: true});
+        }
         const stateFlight = getFlightByIfplId(getState(), ifplId);
         const newFlight = _.get(normalizedUpdatedFlights.entities.flights, ifplId);
         const oldAdv = getAdvisoryByIfplId(getState(), ifplId);
