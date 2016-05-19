@@ -13,6 +13,7 @@ import {
   CAPTURE_FLIGHTS,
   FREEZE_FLIGHTS,
   TRACK_FLIGHTS,
+  IGNORE_FLIGHTS,
 } from '../actions/positions';
 
 const defaultState = {
@@ -90,6 +91,23 @@ export default function reducer(state = defaultState, action) {
 
       return Object.assign({}, state, {flights});
 
+    }
+    case IGNORE_FLIGHTS:
+    {
+      const {ifplIds} = action;
+
+      if(_.isEmpty(ifplIds)) {
+        return state;
+      }
+
+      const flights = _.mapValues(state.flights, (f, ifplId) => {
+        if(_.includes(ifplIds, ifplId)) {
+          return Object.assign({}, f, {tracked: false});
+        }
+        return f;
+      });
+
+      return Object.assign({}, state, {flights});
     }
   }
 

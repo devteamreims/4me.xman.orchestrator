@@ -18,6 +18,11 @@ const defaultPosition = {
   }
 };
 
+const toIfplId = flight => flight.ifplId;
+const isCaptured = flight => flight.captured;
+const isTracked = flight => flight.tracked;
+const isFrozen = flight => flight.frozen;
+
 export const getFlights = (state) => state.flightList.flights;
 export const getFlightByIfplId = (state, ifplId) => _.get(getFlights(state), ifplId);
 
@@ -29,8 +34,42 @@ export const getFlightsWithData = (state) => {
 
 export const getTrackedFlightsWithData = (state) => {
   return _(getFlightsWithData(state))
-    .reject(flight => !flight.tracked)
+    .filter(isTracked)
     .value();
+};
+
+export const getTrackedIfplIds = state => {
+  return _(getFlights(state))
+    .filter(isTracked)
+    .map(toIfplId)
+    .value();
+};
+
+export const getCapturedIfplIds = state => {
+  return _(getFlights(state))
+    .filter(isCaptured)
+    .map(toIfplId)
+    .value();
+};
+
+export const getFrozenIfplIds = state => {
+  return _(getFlights(state))
+    .filter(isFrozen)
+    .map(toIfplId)
+    .value();
+};
+
+export const getIgnoredIfplIds = (state) => {
+  return _(getFlights(state))
+    .reject(isCaptured)
+    .reject(isTracked)
+    .reject(isFrozen)
+    .map(toIfplId)
+    .value();
+};
+
+export const isFlightCaptured = (state, ifplId) => {
+  return _.get(getFlightByIfplId(state, ifplId), 'captured', false);
 };
 
 import {

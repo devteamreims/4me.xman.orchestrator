@@ -9,7 +9,11 @@ const request = rp;
 
 import {
   getFlightsWithData,
-  getSortedFlightsInFilterWithData
+  getSortedFlightsInFilterWithData,
+  getIgnoredIfplIds,
+  getTrackedIfplIds,
+  getCapturedIfplIds,
+  getFrozenIfplIds,
 } from '../selectors/flight';
 
 import {
@@ -49,6 +53,7 @@ export const UPDATE_POSITIONS = 'UPDATE_POSITIONS';
 export const CAPTURE_FLIGHTS = 'CAPTURE_FLIGHTS';
 export const FREEZE_FLIGHTS = 'FREEZE_FLIGHTS';
 export const TRACK_FLIGHTS = 'TRACK_FLIGHTS';
+export const IGNORE_FLIGHTS = 'IGNORE_FLIGHTS';
 
 export function updatePositionsAction(positions) {
   return {
@@ -75,6 +80,13 @@ export function freezeFlightsAction(ifplIds) {
 export function trackFlightsAction(ifplIds) {
   return {
     type: TRACK_FLIGHTS,
+    ifplIds,
+  };
+}
+
+export function ignoreFlightsAction(ifplIds) {
+  return {
+    type: IGNORE_FLIGHTS,
     ifplIds,
   };
 }
@@ -175,11 +187,11 @@ export function updatePositions() {
         });
         const trackedIfplIds = _.map(trackedFlights, toIfplId);
 
-        const ignoredFlights = _.reject(flights, flight =>
-          shouldFlightBeTracked(flight)
-          || shouldFlightBeFrozen(flight)
-          || shouldFlightBeCaptured(flight));
-        const ignoredIfplIds = _.map(ignoredFlights, toIfplId);
+        const forceIgnoredFlights = _.filter(flights, flight => {
+          const isFlightAlreadyTracked = _.get(flight, 'tracked', false);
+          return isFlightAlreadyTracked && !shouldFlightBeTracked(flight);
+        });
+        const forceIgnoredIfplIds = _.map(forceIgnoredFlights, toIfplId);
 
         if(!_.isEmpty(capturedIfplIds)) {
           _.each(capturedFlights, (f) => {
@@ -214,14 +226,15 @@ export function updatePositions() {
           dispatch(trackFlightsAction(trackedIfplIds));
         }
 
-        if(!_.isEmpty(ignoredIfplIds)) {
-          _.each(ignoredFlights, (f) => {
+        if(!_.isEmpty(forceIgnoredIfplIds)) {
+          _.each(forceIgnoredFlights, f => {
             lifecycleLogger(
               '[%s] is now ignored',
               flightToString(f)
             );
             logFlight(getState, f.ifplId, {state: 'ignored'});
           });
+          dispatch(ignoreFlightsAction(forceIgnoredIfplIds));
         }
 
         return;

@@ -21,6 +21,7 @@ import {
 
 import {
   getFlightByIfplId,
+  isFlightCaptured,
 } from '../selectors/flight';
 
 import {
@@ -240,6 +241,7 @@ export function updateFlightList(data) {
 
     if(flightsAreUpdated) {
       // Plug in our shouldAdvisoryUpdate hook
+      let ifplIdsToLog = [];
       const postHookAdvisories = _.mapValues(normalizedUpdatedFlights.entities.advisories, (newAdv, ifplId) => {
         const stateFlight = getFlightByIfplId(getState(), ifplId);
         const newFlight = _.get(normalizedUpdatedFlights.entities.flights, ifplId);
@@ -247,6 +249,14 @@ export function updateFlightList(data) {
 
         if(!shouldAdvisoryUpdate(stateFlight, newFlight, oldAdv, newAdv)) {
           return oldAdv;
+        }
+
+        // Logs update of captured flights only with shouldAdvisoryUpdate to true
+        if(isFlightCaptured(getState, ifplId)) {
+          ifplIdsToLog = [
+            ifplId,
+            ...ifplIdsToLog,
+          ];
         }
 
         return newAdv;
@@ -258,7 +268,8 @@ export function updateFlightList(data) {
       // Update our internal tree
       dispatch(updateFlightsAction(normalizedUpdatedFlights));
 
-      _.each(updatedIfplIds, ifplId => logFlight(getState, ifplId, {updated: true}));
+
+      _.each(ifplIdsToLog, ifplId => logFlight(getState, ifplId, {updated: true}));
     }
 
     if(flightsAreRemoved) {
