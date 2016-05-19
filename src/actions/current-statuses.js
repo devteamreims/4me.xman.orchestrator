@@ -14,6 +14,10 @@ import {
   getFlightByIfplIdWithData,
 } from '../selectors/flight';
 
+import {
+  logFlight,
+} from '../logger';
+
 export const SET_CURRENT_STATUS = 'SET_CURRENT_STATUS';
 export const SET_CURRENT_STATUSES = 'SET_CURRENT_STATUSES';
 export const PRUNE_OLD_STATUSES = 'PRUNE_OLD_STATUSES';
@@ -75,6 +79,10 @@ export function commitCurrentStatus(ifplId, status) {
 
     return dispatchAction()
       .then(dbSave)
+      .then(r => {
+        logFlight(getState, ifplId, {xmanAction: true});
+        return r;
+      })
       .then(emitToSocket)
       .catch((err) => debug(err));
   }

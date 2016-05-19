@@ -35,6 +35,7 @@ import {
 
 import {
   lifecycleLogger,
+  logFlight,
 } from '../logger';
 
 import {
@@ -234,6 +235,7 @@ export function updateFlightList(data) {
     if(flightsAreAdded) {
       // Update our internal tree
       dispatch(addFlightsAction(normalizedAddedFlights));
+      _.each(addedIfplIds, ifplId => logFlight(getState, ifplId, {added: true}));
     }
 
     if(flightsAreUpdated) {
@@ -255,9 +257,13 @@ export function updateFlightList(data) {
 
       // Update our internal tree
       dispatch(updateFlightsAction(normalizedUpdatedFlights));
+
+      _.each(updatedIfplIds, ifplId => logFlight(getState, ifplId, {updated: true}));
     }
 
     if(flightsAreRemoved) {
+      // Log before removal
+      _.each(removedIfplIds, ifplId => logFlight(getState, ifplId, {removed: true}));
       // Update internal tree
       dispatch(removeFlightsAction({
         lastFetched: data.lastFetched,

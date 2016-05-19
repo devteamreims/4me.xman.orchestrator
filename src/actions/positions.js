@@ -38,6 +38,7 @@ import {
 
 import {
   lifecycleLogger,
+  logFlight,
 } from '../logger';
 
 import {
@@ -181,34 +182,46 @@ export function updatePositions() {
         const ignoredIfplIds = _.map(ignoredFlights, toIfplId);
 
         if(!_.isEmpty(capturedIfplIds)) {
-          _.each(capturedFlights, (f) => lifecycleLogger(
-            '[%s] is now captured',
-            flightToString(f)
-          ));
+          _.each(capturedFlights, (f) => {
+            lifecycleLogger(
+              '[%s] is now captured',
+              flightToString(f)
+            );
+            logFlight(getState, f.ifplId, {state: 'captured'});
+          });
           dispatch(captureFlightsAction(capturedIfplIds));
         }
 
         if(!_.isEmpty(frozenIfplIds)) {
-          _.each(frozenFlights, f => lifecycleLogger(
-            '[%s] is now frozen',
-            flightToString(f)
-          ));
+          _.each(frozenFlights, (f) => {
+            lifecycleLogger(
+              '[%s] is now frozen',
+              flightToString(f)
+            );
+            logFlight(getState, f.ifplId, {state: 'frozen'});
+          });
           dispatch(freezeFlightsAction(frozenIfplIds));
         }
 
         if(!_.isEmpty(trackedIfplIds)) {
-          _.each(trackedFlights, f => lifecycleLogger(
-            '[%s] is now tracked',
-            flightToString(f)
-          ));
+          _.each(trackedFlights, (f) => {
+            lifecycleLogger(
+              '[%s] is now tracked',
+              flightToString(f)
+            );
+            logFlight(getState, f.ifplId, {state: 'tracked'});
+          });
           dispatch(trackFlightsAction(trackedIfplIds));
         }
 
         if(!_.isEmpty(ignoredIfplIds)) {
-          _.each(ignoredFlights, f => lifecycleLogger(
-            '[%s] is ignored for now',
-            flightToString(f)
-          ));
+          _.each(ignoredFlights, (f) => {
+            lifecycleLogger(
+              '[%s] is now ignored',
+              flightToString(f)
+            );
+            logFlight(getState, f.ifplId, {state: 'ignored'});
+          });
         }
 
         return;
