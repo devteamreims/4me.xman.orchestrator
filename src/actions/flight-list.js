@@ -78,6 +78,7 @@ export function updateFlights() {
       })
       // Handle errors
       .catch(err => {
+        debug(err);
         const message = _.get(err, 'message', 'Something went wrong fetching EGLL data');
         const level = _.get(err, 'level', 'critical');
         return dispatch(escalateFetcher('EGLL', message, level));
@@ -125,7 +126,7 @@ function normalizeXmanData(data) {
     }}
   */
 
-  const flights = _.cloneDeep(data.flights);
+  const flights = _.cloneDeep(_.get(data, 'flights', []));
 
   const extractEntities = (prev, f) => {
     const toMerge = {flights: {}, advisories: {}};
@@ -252,7 +253,7 @@ export function updateFlightList(data) {
         }
 
         // Logs update of captured flights only with shouldAdvisoryUpdate to true
-        if(isFlightCaptured(getState, ifplId)) {
+        if(isFlightCaptured(getState(), ifplId)) {
           ifplIdsToLog = [
             ifplId,
             ...ifplIdsToLog,
