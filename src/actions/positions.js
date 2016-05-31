@@ -112,12 +112,10 @@ export function updatePositions() {
       callsigns,
     };
 
-    const normalizePositionData = (assocArray) => (rawData) => {
+    const normalizePositionData = (assocArray) => (rawFlights) => {
       const arcidToIfplId = (arcid) => _.get(_.find(assocArray, f => f.arcid === arcid), 'ifplId');
 
-      const when = rawData.lastFetched;
-
-      const flights = _.reduce(rawData.flights, (prev, pos) => {
+      const flights = _.reduce(rawFlights, (prev, pos) => {
         const arcid = pos.callsign;
         const ifplId = arcidToIfplId(arcid);
 
@@ -135,6 +133,8 @@ export function updatePositions() {
           lat: pos.lat,
         };
 
+        const when = _.get(pos, 'when', Date.now());
+
         const toMerge = {
           [ifplId]: {
             when,
@@ -146,7 +146,7 @@ export function updatePositions() {
         return Object.assign(prev, toMerge);
       }, {});
 
-      return Object.assign({}, rawData, {flights});
+      return {flights};
     };
 
     return request({
