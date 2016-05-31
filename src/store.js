@@ -43,8 +43,8 @@ export default function makeStore(socketIo) {
   const periodicPositionUpdate = () => store.dispatch(updatePositions());
   const periodicStatusPrune = () => store.dispatch(pruneOldStatuses());
 
-  setInterval(periodicFlightUpdate, 1000*60);
-  setInterval(periodicPositionUpdate, 1000*20);
+  setInterval(periodicFlightUpdate, 1000*20);
+  setInterval(periodicPositionUpdate, 1000*5);
   setInterval(periodicStatusPrune, 1000*60*30);
 
   setTimeout(() => {
