@@ -67,6 +67,11 @@ export function shouldAdvisoryUpdate(stateFlight, newFlight, oldAdvisory, newAdv
     return true;
   }
 
+  if(_.isEqual(oldAdvisory, newAdvisory)) {
+    // Advisory are identical, discard update
+    return false;
+  }
+
   if(destination === 'EGLL') {
     if(oldAdvisory.machReduction <= newAdvisory.machReduction) {
       return true;
