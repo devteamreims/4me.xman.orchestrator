@@ -65,5 +65,6 @@ export const getPrettyStatus = createSelector(
         fetchers,
         socketClients,
       },
+      version: process.env.npm_package_version,
     };
   });
