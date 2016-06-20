@@ -125,10 +125,8 @@ export function prepareAdvisory(flight, advisory) {
           return 4;
         case (delay >= 60):
           return 3;
-        case (delay >= 30):
-          return 2;
         case (delay > 0):
-          return 1;
+          return 2;
         default:
           return 0;
       }
