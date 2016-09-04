@@ -88,6 +88,9 @@ export function commitCurrentStatus(ifplId, status) {
   }
 }
 
+import levelup from 'level';
+import LeveLPromise from 'level-promise';
+
 function saveToDb(stuffToSave) {
   debug('Calling promise');
   const p = new Promise((resolve, reject) => {
