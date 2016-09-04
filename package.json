@@ -40,7 +40,6 @@
     "reselect": "^2.5.1",
     "sexagesimal": "^0.5.0",
     "socket.io": "^1.4.4",
-    "socket.io-cookie-parser": "^1.0.0",
     "turf": "^2.0.2"
   },
   "devDependencies": {

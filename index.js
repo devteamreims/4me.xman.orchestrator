@@ -2,10 +2,11 @@ import express      from 'express';
 import path         from 'path';
 import cors from 'cors';
 import logger       from 'morgan';
-import cookieParser from 'cookie-parser';
+
 import bodyParser   from 'body-parser';
+
 import io from 'socket.io';
-import ioCookieParser from 'socket.io-cookie-parser';
+
 import getRoutes from './src/routes';
 
 import makeStore from './src/store';
@@ -15,13 +16,11 @@ let app = express();
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cookieParser());
 
 app.use(cors());
 
 // Init socket.io
 app.io = io();
-app.io.use(ioCookieParser());
 
 // Init Redux Store
 let store = makeStore(app.io);
