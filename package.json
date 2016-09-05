@@ -4,6 +4,7 @@
   "description": "4ME XMAN Orchestrator",
   "main": "index.js",
   "scripts": {
+    "preversion": "git add Changelog.md",
     "babel-node": "babel-node server.js",
     "dev": "DEBUG=-4me.redux.logger,4me.* npm run start",
     "coords": "babel-node coords.js",
