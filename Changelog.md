@@ -1,3 +1,10 @@
+# v0.1.3
+  * Update dependencies
+  * Prepare code for xman action persistence
+  * Add npm-check script and integrates with gitlab-ci [#115](devteamreims/4ME#115)/[#45](devteamreims/4ME#45)
+  * More straightforward release mechanism using `npm version`
+  * Remove david-dm badge from README in favor of gitlab-ci badge
+  
 # 0.1.2
   * Add Changelog
   * Add version in /status [#91](https://github.com/devteamreims/4ME/issues/91)
