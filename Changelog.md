@@ -1,4 +1,4 @@
-# Master
+# v0.1.4
   * Update dependencies
   * Plug gitlab-ci
   * Setup jest test env

@@ -1,6 +1,6 @@
 {
   "name": "4me.xman.orchestrator",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "4ME XMAN Orchestrator",
   "main": "index.js",
   "scripts": {
