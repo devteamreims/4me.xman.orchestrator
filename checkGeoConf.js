@@ -5,6 +5,10 @@ import sectors from './config/sectors';
 
 
 // Some script here to check geo config
+
+console.log('This does nothing for now !');
+
+process.exit(0);
 // Check number of sectors
 // Check that each sector has each destination set
 // Check that we have a capture area for each destination

@@ -1,3 +1,8 @@
+# Master
+  * Update dependencies
+  * Plug gitlab-ci
+  * Setup jest test env
+
 # v0.1.3
   * Update dependencies
   * Prepare code for xman action persistence
