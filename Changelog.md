@@ -1,3 +1,7 @@
+# Master
+  * Formalize specification tests
+  * Add coverage badge
+
 # v0.1.4
   * Update dependencies
   * Plug gitlab-ci
