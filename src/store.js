@@ -47,12 +47,11 @@ export default function makeStore(socketIo) {
   setInterval(periodicPositionUpdate, 1000*5);
   setInterval(periodicStatusPrune, 1000*60*30);
 
-  setTimeout(() => {
-    periodicFlightUpdate()
-      .then(() => periodicPositionUpdate());
-  }, 200);
-
   installSubscriptions(store);
+
+  periodicFlightUpdate()
+    .then(() => periodicPositionUpdate());
+
 
   return store;
 }

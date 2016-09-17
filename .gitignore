@@ -3,3 +3,4 @@ db.up
 node_modules
 npm-debug.log
 .env
+coverage

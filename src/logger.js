@@ -2,7 +2,15 @@ import d from 'debug';
 
 import bunyan from 'bunyan';
 
-const opsLog = bunyan.createLogger({name: 'xman-ops'});
+export const opsLog = bunyan.createLogger({
+  name: 'xman-ops',
+  streams: [
+    {
+      level: process.env.NODE_ENV === 'test' ? bunyan.FATAL + 1 : 'info',
+      stream: process.stdout,
+    }
+  ],
+});
 
 const debug = {
   lifecycle: d('4me.lifecycle'),
