@@ -52,7 +52,8 @@
     "supertest": "^2.0.0"
   },
   "jest": {
-    "testEnvironment": "node",
+    "testEnvironment": "jsdom",
+    "setupTestFrameworkScriptFile": "tests/testSetup.js",
     "testPathDirs": [
       "tests"
     ],
