@@ -30,12 +30,12 @@ export function isInSectorArea(sectorName, destinationName, rawCoords) {
   const destination = _.get(sector, _.toUpper(destinationName));
 
   if(_.isEmpty(destination)) {
-    console.log(`${sectorName} : ${destinationName} is unknown`);
+    debug(`${sectorName} : ${destinationName} is unknown`);
     return false;
   }
 
   if(_.isEmpty(destination.horizontal)) {
-    console.log('Destination has no polygon defined');
+    debug('Destination has no polygon defined');
     return false;
   }
 
@@ -52,8 +52,8 @@ export function isInSectorArea(sectorName, destinationName, rawCoords) {
   try {
     point = turf.point([long, lat]);
   } catch(e) {
-    console.log('Could not create point from these coords :');
-    console.log(rawCoords);
+    debug('Could not create point from these coords :');
+    debug(rawCoords);
     return false;
   }
 
@@ -65,12 +65,12 @@ export function isInSector(sectorName, destinationName, rawCoords) {
   const destination = _.get(sector, _.toUpper(destinationName));
 
   if(_.isEmpty(destination)) {
-    console.log(`${sectorName} : ${destinationName} is unknown`);
+    debug(`${sectorName} : ${destinationName} is unknown`);
     return false;
   }
 
   if(_.isEmpty(destination.vertical)) {
-    console.log(`${sectorName} : ${destinationName} has no vertical limits defined`);
+    debug(`${sectorName} : ${destinationName} has no vertical limits defined`);
     return false;
   }
 
@@ -85,7 +85,7 @@ export function isInCaptureArea(destinationName, rawCoords) {
   const destination = _.get(captureAreas, _.toUpper(destinationName));
 
   if(_.isEmpty(destination)) {
-    console.log(`isInCaptureArea : destination ${destinationName} is unknown`);
+    debug(`isInCaptureArea : destination ${destinationName} is unknown`);
     return false;
   }
 
@@ -102,8 +102,8 @@ export function isInCaptureArea(destinationName, rawCoords) {
   try {
     point = turf.point([long, lat]);
   } catch(e) {
-    console.log('Could not create point from these coords :');
-    console.log(rawCoords);
+    debug('Could not create point from these coords :');
+    debug(rawCoords);
     return false;
   }
 
@@ -114,7 +114,7 @@ export function isInFreezeArea(destinationName, rawCoords) {
   const destination = _.get(freezeAreas, _.toUpper(destinationName));
 
   if(_.isEmpty(destination)) {
-    console.log(`isInFreezeArea : destination ${destinationName} is unknown`);
+    debug(`isInFreezeArea : destination ${destinationName} is unknown`);
     return false;
   }
 
@@ -131,8 +131,8 @@ export function isInFreezeArea(destinationName, rawCoords) {
   try {
     point = turf.point([long, lat]);
   } catch(e) {
-    console.log('Could not create point from these coords :');
-    console.log(rawCoords);
+    debug('Could not create point from these coords :');
+    debug(rawCoords);
     return false;
   }
 
@@ -143,7 +143,7 @@ export function isInTrackArea(destinationName, rawCoords) {
   const destination = _.get(trackAreas, _.toUpper(destinationName));
 
   if(_.isEmpty(destination)) {
-    console.log(`isInTrackArea : destination ${destinationName} is unknown`);
+    debug(`isInTrackArea : destination ${destinationName} is unknown`);
     return false;
   }
 
@@ -164,8 +164,8 @@ export function isInTrackArea(destinationName, rawCoords) {
   try {
     point = turf.point([long, lat]);
   } catch(e) {
-    console.log('Could not create point from these coords :');
-    console.log(rawCoords);
+    debug('Could not create point from these coords :');
+    debug(rawCoords);
     return false;
   }
 
