@@ -1,4 +1,6 @@
 # Master
+  * Move to controlled docker image (devteamreims/4ME#140)
+  * Move to yarn as package manager (devteamreims/4ME#141)
   * Formalize specification tests
   * Add coverage badge
 
@@ -13,7 +15,7 @@
   * Add npm-check script and integrates with gitlab-ci [#115](devteamreims/4ME#115)/[#45](devteamreims/4ME#45)
   * More straightforward release mechanism using `npm version`
   * Remove david-dm badge from README in favor of gitlab-ci badge
-  
+
 # 0.1.2
   * Add Changelog
   * Add version in /status [#91](https://github.com/devteamreims/4ME/issues/91)
