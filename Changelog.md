@@ -1,4 +1,4 @@
-# Master
+# v0.2.1 (2016-12-09)
   * Move bluebird from devDeps to deps (devteamreims/4ME#156)
 
 # v0.2.0
