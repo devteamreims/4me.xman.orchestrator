@@ -21,6 +21,9 @@ const normalizePosition = rawCoords => ({
 
 export function isInSectorArea(sectorName, destinationName, rawCoords) {
   const position = normalizePosition(rawCoords);
+  if(!position.long && !position.lat) {
+    return false;
+  }
   const destination = _.toUpper(destinationName);
 
   return xmanEnv.isInGeoSector(destination, sectorName, position);
@@ -28,6 +31,9 @@ export function isInSectorArea(sectorName, destinationName, rawCoords) {
 
 export function isInSector(sectorName, destinationName, rawCoords) {
   const position = normalizePosition(rawCoords);
+  if(!position.long && !position.lat) {
+    return false;
+  }
   const destination = _.toUpper(destinationName);
 
   return xmanEnv.isInSector(destination, sectorName, position);
@@ -36,6 +42,9 @@ export function isInSector(sectorName, destinationName, rawCoords) {
 
 export function isInCaptureArea(destinationName, rawCoords) {
   const position = normalizePosition(rawCoords);
+  if(!position.long && !position.lat) {
+    return false;
+  }
   const destination = _.toUpper(destinationName);
 
   return xmanEnv.isCaptured(destination, position);
@@ -43,6 +52,9 @@ export function isInCaptureArea(destinationName, rawCoords) {
 
 export function isInFreezeArea(destinationName, rawCoords) {
   const position = normalizePosition(rawCoords);
+  if(!position.long && !position.lat) {
+    return false;
+  }
   const destination = _.toUpper(destinationName);
 
   return xmanEnv.isFrozen(destination, position);
@@ -50,6 +62,9 @@ export function isInFreezeArea(destinationName, rawCoords) {
 
 export function isInTrackArea(destinationName, rawCoords) {
   const position = normalizePosition(rawCoords);
+  if(!position.long && !position.lat) {
+    return false;
+  }
   const destination = _.toUpper(destinationName);
 
   return xmanEnv.isTracked(destination, position);
