@@ -41,9 +41,7 @@
     "redux-thunk": "^2.1.0",
     "request-promise": "^4.1.1",
     "reselect": "^2.5.1",
-    "sexagesimal": "^0.5.0",
-    "socket.io": "^1.4.4",
-    "turf": "^3.0.14"
+    "socket.io": "^1.4.4"
   },
   "devDependencies": {
     "babel-jest": "^15.0.0",
