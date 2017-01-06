@@ -1,3 +1,6 @@
+# Master
+  * Use 4me.env for XMAN definitions (devteamreims/4ME#146)
+  
 # v0.2.1 (2016-12-09)
   * Move bluebird from devDeps to deps (devteamreims/4ME#156)
 
