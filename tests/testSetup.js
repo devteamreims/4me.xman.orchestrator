@@ -18,11 +18,13 @@ global.POSITIONS_URL = "http://flight-positions";
 beforeEach(() => {
   process.env.EGLL_PARSER_URL = global.EGLL_PARSER_URL;
   process.env.POSITIONS_URL = global.POSITIONS_URL;
+  process.env.FOURME_ENV = 'LFEE';
 });
 
 afterEach(() => {
   delete process.env.EGLL_PARSER_URL;
   delete process.env.POSITIONS_URL;
+  delete process.env.FOURME_ENV;
 });
 
 // Mock socket.io here
