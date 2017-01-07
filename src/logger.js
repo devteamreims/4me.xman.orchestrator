@@ -21,16 +21,9 @@ export function lifecycleLogger(...args) {
   return debug['lifecycle'](...args);
 }
 
-import {
-  getFlightByIfplIdWithData,
-} from './selectors/flight';
-
-export function logFlight(getState, ifplId, payload) {
-  const flight = getFlightByIfplIdWithData(getState(), ifplId);
-
+export function logFlight(flight, payload) {
   return opsLog.info({
     flight,
-    ifplId,
     payload,
   });
 

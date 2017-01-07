@@ -9,7 +9,7 @@
     "dev": "DEBUG=-4me.redux.logger,4me.* nodemon --exec npm run start",
     "check-conf:geo": "babel-node checkGeoConf.js",
     "start": "npm run babel-node --silent",
-    "test": "jest",
+    "test": "FOURME_ENV=LFEE jest",
     "check-deps": "npm-check --production"
   },
   "author": "Benjamin Beret <benjamin.beret@gmail.com>",

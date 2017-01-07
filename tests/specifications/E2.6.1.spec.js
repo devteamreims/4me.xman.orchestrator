@@ -65,7 +65,7 @@ describe('E2.6.1 : will produce logs for a number of xman operations', () => {
           fp.last
         )(global);
 
-        expect(logRecord.ifplId).toBe(xmanFlight.ifplId);
+        expect(logRecord.flight.ifplId).toBe(xmanFlight.ifplId);
         expect(logRecord.payload.added).toBe(true);
       });
 

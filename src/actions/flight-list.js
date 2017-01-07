@@ -22,6 +22,7 @@ import {
 import {
   getFlightByIfplId,
   isFlightCaptured,
+  getFlightByIfplIdWithData,
 } from '../selectors/flight';
 
 import {
@@ -237,7 +238,7 @@ export function updateFlightList(data) {
     if(flightsAreAdded) {
       // Update our internal tree
       dispatch(addFlightsAction(normalizedAddedFlights));
-      _.each(addedIfplIds, ifplId => logFlight(getState, ifplId, {added: true}));
+      _.each(addedIfplIds, ifplId => logFlight(getFlightByIfplIdWithData(getState(), ifplId), {added: true}));
     }
 
     if(flightsAreUpdated) {
@@ -270,12 +271,12 @@ export function updateFlightList(data) {
       dispatch(updateFlightsAction(normalizedUpdatedFlights));
 
 
-      _.each(ifplIdsToLog, ifplId => logFlight(getState, ifplId, {updated: true}));
+      _.each(ifplIdsToLog, ifplId => logFlight(getFlightByIfplIdWithData(getState(), ifplId), {updated: true}));
     }
 
     if(flightsAreRemoved) {
       // Log before removal
-      _.each(removedIfplIds, ifplId => logFlight(getState, ifplId, {removed: true}));
+      _.each(removedIfplIds, ifplId => logFlight(getFlightByIfplIdWithData(getState(), ifplId), {removed: true}));
       // Update internal tree
       dispatch(removeFlightsAction({
         lastFetched: data.lastFetched,

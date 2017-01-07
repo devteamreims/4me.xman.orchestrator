@@ -14,6 +14,7 @@ import {
   getTrackedIfplIds,
   getCapturedIfplIds,
   getFrozenIfplIds,
+  getFlightByIfplIdWithData,
 } from '../selectors/flight';
 
 import {
@@ -199,7 +200,7 @@ export function updatePositions() {
               '[%s] is now captured',
               flightToString(f)
             );
-            logFlight(getState, f.ifplId, {state: 'captured'});
+            logFlight(getFlightByIfplIdWithData(getState(), f.ifplId), {state: 'captured'});
           });
           dispatch(captureFlightsAction(capturedIfplIds));
         }
@@ -210,7 +211,7 @@ export function updatePositions() {
               '[%s] is now frozen',
               flightToString(f)
             );
-            logFlight(getState, f.ifplId, {state: 'frozen'});
+            logFlight(getFlightByIfplIdWithData(getState(), f.ifplId), {state: 'frozen'});
           });
           dispatch(freezeFlightsAction(frozenIfplIds));
         }
@@ -221,7 +222,7 @@ export function updatePositions() {
               '[%s] is now tracked',
               flightToString(f)
             );
-            logFlight(getState, f.ifplId, {state: 'tracked'});
+            logFlight(getFlightByIfplIdWithData(getState(), f.ifplId), {state: 'tracked'});
           });
           dispatch(trackFlightsAction(trackedIfplIds));
         }
@@ -232,7 +233,7 @@ export function updatePositions() {
               '[%s] is now ignored',
               flightToString(f)
             );
-            logFlight(getState, f.ifplId, {state: 'ignored'});
+            logFlight(getFlightByIfplIdWithData(getState(), f.ifplId), {state: 'ignored'});
           });
           dispatch(ignoreFlightsAction(forceIgnoredIfplIds));
         }
