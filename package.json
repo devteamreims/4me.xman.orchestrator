@@ -25,7 +25,7 @@
     "bunyan": "^1.8.1",
     "cors": "^2.8.1",
     "debug": "^2.2.0",
-    "dotenv": "^2.0.0",
+    "dotenv": "4.0.0",
     "express": "^4.13.4",
     "level": "^1.4.0",
     "level-promise": "^2.1.0",
@@ -43,16 +43,15 @@
     "socket.io": "^1.4.4"
   },
   "devDependencies": {
-    "babel-jest": "^15.0.0",
-    "babel-polyfill": "^6.13.0",
-    "jest": "^15.1.1",
+    "babel-jest": "18.0.0",
+    "jest": "18.1.0",
     "mock-socket.io": "^1.1.0",
     "nock": "^8.0.0",
     "supertest": "^2.0.0"
   },
   "jest": {
-    "testEnvironment": "jsdom",
-    "setupTestFrameworkScriptFile": "tests/testSetup.js",
+    "testEnvironment": "node",
+    "setupTestFrameworkScriptFile": "./tests/testSetup.js",
     "testPathDirs": [
       "tests"
     ],
