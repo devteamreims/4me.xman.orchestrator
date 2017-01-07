@@ -27,6 +27,8 @@ describe('E3.9 : raises an error when receiving stale data', () => {
     // Remove mocks
     jest.resetModules();
 
+    jest.clearAllTimers();
+
     // Remove unused variables
     parser = null;
     positions = null;
@@ -36,7 +38,7 @@ describe('E3.9 : raises an error when receiving stale data', () => {
     const data = fp.cloneDeepWith(undefined, xmanData);
     parser.reply(200, data);
     // Use fake timers to prevent app refresh loops
-    jest.useFakeTimers();
+    // jest.useFakeTimers();
 
     // All flights are tracked
     //const mockGeo = require('../../src/geo/index.js');
@@ -48,7 +50,7 @@ describe('E3.9 : raises an error when receiving stale data', () => {
     const app = require('../../index').default;
 
     // Revert to real timers to use Promise.delay();
-    jest.useRealTimers();
+    // jest.useRealTimers();
 
     return Promise.delay(500) // Let the app initialize
       .then(() => request(app)
@@ -68,7 +70,7 @@ describe('E3.9 : raises an error when receiving stale data', () => {
     parser.reply(200, data);
 
     // Use fake timers to prevent app refresh loops
-    jest.useFakeTimers();
+    // jest.useFakeTimers();
 
     // All flights are tracked
     //const mockGeo = require('../../src/geo/index.js');
@@ -80,7 +82,7 @@ describe('E3.9 : raises an error when receiving stale data', () => {
     const app = require('../../index').default;
 
     // Revert to real timers to use Promise.delay();
-    jest.useRealTimers();
+    // jest.useRealTimers();
 
     return Promise.delay(500) // Let the app initialize
       .then(() => request(app)
