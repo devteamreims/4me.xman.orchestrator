@@ -22,6 +22,7 @@ jest:
   stage: test
   script:
     - yarn
+    - touch .env
     - npm test -- --coverage
 
 build_release_image:
