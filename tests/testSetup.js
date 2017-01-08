@@ -14,6 +14,7 @@ opsLog.addStream({
 
 global.EGLL_PARSER_URL = "http://egll-parser";
 global.POSITIONS_URL = "http://flight-positions";
+global.FOURME_ENV = 'LFEE';
 
 beforeEach(() => {
   process.env.EGLL_PARSER_URL = global.EGLL_PARSER_URL;
